@@ -1,8 +1,20 @@
+/*  
+ * Alyssa Williams & Jesse Johnstone 
+ * HW2 2023
+*/
+
 package HW2;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
+//TODO: Load Inventory CSV
+//TODO: Wait to receive packet from client
+//TODO: Once a packet is received from a Client, retrieve the information relevant to the requested Item ID
+//TODO: from the data structure you used in Step 1 and send back such information to the Client
+//TODO: Repeat waiting for packet from Client infinitely until exception is caught 
+//TODO: Close datagram socket when exception is caught
 
 public class InventoryServer {
      public static void main(String[] args) throws IOException {
