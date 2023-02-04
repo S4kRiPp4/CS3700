@@ -44,7 +44,7 @@ public class InventoryClient {
             // send request
             InetAddress address = InetAddress.getByName(args[0]);
             byte[] buf = fromUser.getBytes();
-            DatagramPacket udpPacket = new DatagramPacket(buf, buf.length, address, 5678);
+            DatagramPacket udpPacket = new DatagramPacket(buf, buf.length, address, 5140); // 5140 Jesse, 5310 Alyssa
             udpSocket.send(udpPacket);
 
             // get response
