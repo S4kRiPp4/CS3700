@@ -25,37 +25,44 @@ public class InventoryServer {
         String fromClient = null, toClient = null;
         boolean morePackets = true;
         
-        String fileName = "C:\\Users\\jesse\\Desktop\\Network2023\\Repo\\CS3700\\HW2\\HW02Inventory.csv";
+        //Buffered Reader variables to read the inventory csv 
+        String fileName = "/Users/alyssa/Desktop/MSU-Denver/enrolledCourses/CS-3700/Programs/CS3700/HW2/HW02Inventory.csv";
         File file = new File(fileName);
         FileReader fileReader = new FileReader(file);
         BufferedReader lineReader = new BufferedReader(fileReader);
         String line = "";
 
+        // Inventory variables to create an array of inventory data from the Inventory class 
+        String inventoryData[];
+        Inventory inventoryTable[];
+
         while ((line = lineReader.readLine()) != null) {
-            
-            String row[] = line.split("\n");
-            String[][] inventoryTable = new String[7][4];
-                   
-            for (int i = 0; i < row.length; i++) {
+            int rows; 
+            String[] data;
 
+            // Split the csv raw data into rows to parse through 
+            inventoryData = line.split("\n");
+            // Create an Array of Inventory objects with a length that fits the amount of rows of raw data 
+            rows = inventoryData.length;
+            inventoryTable = new Inventory[rows]; 
+
+            // Split each row of data up by commas and create individual Inventory objects 
+            for (int i = 0; i < rows; i++) {
+                data = inventoryData[i].split(",");
+                inventoryTable[i] = new Inventory(data[0], data[1], data[2], data[3]);
                 
+            }
 
-                for (int j = 0; j < 4; j++) {
-
-                    inventoryTable[i][j] = row[i].split(",");
-                    System.out.println(inventoryTable[i][j]);
-                   
-
-                }
-                
-                
-                //String[][] inventoryTable = row[i].split(",");
-                
-
+            // Print the whole inventory table 
+            for(int i=0; i<inventoryTable.length; i++){
+                System.out.println(inventoryTable[i]);
             }
             
         }
+       
         lineReader.close();
+
+        
         
 
 
@@ -92,5 +99,54 @@ public class InventoryServer {
      }
 }
 
+ 
+// Inventory class to create items in the Inventory List 
+class Inventory {
+    private String id, description, price, inventory; 
     
+    public Inventory(String id, String description, String price, String inventory){
+        this.id = id; 
+        this.description = description; 
+        this.price = price; 
+        this.inventory = inventory; 
+    } 
 
+    // getters and setters 
+    public String getId(){
+        return id; 
+    }
+
+    public void setId(String id){
+        this.id = id;
+    }
+
+    public String getDescription(){
+        return description; 
+    }
+
+    public void setDescription(String description){
+        this.description = description;
+    }
+
+    public String getPrice(){
+        return price; 
+    }
+
+    public void setPrice(String price){
+        this.price = price;
+    }
+
+    public String getInventory(){
+        return inventory; 
+    }
+
+    public void setInventory(String inventory){
+        this.inventory = inventory;
+    }
+
+    @Override
+    public String toString(){
+        return id +"\t\t" + description + "\t\t" + price + "\t\t" + inventory; 
+    }
+
+}
