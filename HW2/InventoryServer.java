@@ -7,6 +7,7 @@ package HW2;
 
 import java.io.*;
 import java.net.*;
+import java.text.Format;
 import java.util.*;
 
 
@@ -26,7 +27,9 @@ public class InventoryServer {
         boolean morePackets = true;
         
         //Buffered Reader variables to read the inventory csv 
-        String fileName = "/Users/alyssa/Desktop/MSU-Denver/enrolledCourses/CS-3700/Programs/CS3700/HW2/HW02Inventory.csv";
+        //Alyssa- /Users/alyssa/Desktop/MSU-Denver/enrolledCourses/CS-3700/Programs/CS3700/HW2/HW02Inventory.csv
+        //Jesse - C://Users//jesse//Desktop//Network2023//Repo//CS3700//HW2//HW02Inventory.csv
+        String fileName = "C://Users//jesse//Desktop//Network2023//Repo//CS3700//HW2//HW02Inventory.csv";
         File file = new File(fileName);
         FileReader fileReader = new FileReader(file);
         BufferedReader lineReader = new BufferedReader(fileReader);
@@ -56,6 +59,7 @@ public class InventoryServer {
             // Print the whole inventory table 
             for(int i=0; i<inventoryTable.length; i++){
                 System.out.println(inventoryTable[i]);
+                //System.out.printf(%s , i + 1, inventoryTable[i]);//Maaybe??
             }
             
         }
@@ -144,9 +148,9 @@ class Inventory {
         this.inventory = inventory;
     }
 
-    @Override
-    public String toString(){
-        return id +"\t\t" + description + "\t\t" + price + "\t\t" + inventory; 
-    }
+     @Override
+     public String toString(){
+         return id +"\t\t" + description + "\t\t" + price + "\t\t" + inventory; 
+     }
 
 }
