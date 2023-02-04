@@ -30,7 +30,7 @@ public class InventoryServer {
         // C://Users//jesse//Desktop//Network2023//Repo//CS3700//HW2//HW02Inventory.csv
         // FILEPATH FOR TURNING IN Alyssa- /home/awill157/HW02/server/HW02Inventory.csv
         // FILEPATH FOR TURNING IN Jesse /home/jbrott/HW02/server/HW02Inventory.csv
-        String fileName = "/Users/alyssa/Desktop/MSU-Denver/enrolledCourses/CS-3700/Programs/CS3700/HW2/HW02Inventory.csv";
+        String fileName = "/home/awill157/HW02/server/HW02Inventory.csv";
         File file = new File(fileName);
         FileReader fileReader = new FileReader(file);
         BufferedReader lineReader = new BufferedReader(fileReader);
@@ -44,7 +44,8 @@ public class InventoryServer {
         String[] data;
 
         // Split the csv raw data into rows to parse through
-        // Create an Array of Inventory objects with a length that fits the amount of rows of raw data
+        // Create an Array of Inventory objects with a length that fits the amount of
+        // rows of raw data
         line = lineReader.readLine();
         while ((line != null)) {
             inventoryData.add(line);
@@ -52,7 +53,6 @@ public class InventoryServer {
         }
         lineReader.close();
 
-       
         // Split each row of data up by commas and create individual Inventory
         // objects
         rows = inventoryData.size();
@@ -61,45 +61,43 @@ public class InventoryServer {
             data = inventoryData.get(i).split(",");
             inventoryTable.add(new Inventory(data[0], data[1], data[2], data[3]));
         }
-        
+
         // Print the whole inventory table
-        for(int i=0; i<inventoryTable.size(); i++){
+        for (int i = 0; i < inventoryTable.size(); i++) {
             System.out.println(inventoryTable.get(i));
         }
 
-        String tempFromClient = "00002";
-        String tempToClient;
-        // byte[] buf = new byte[256];
+        byte[] buf = new byte[256];
 
-        // while (morePackets) {
-        // try {
+        while (morePackets) {
+            try {
 
-        // // receive UDP packet from client
-        // udpPacket = new DatagramPacket(buf, buf.length);
-        // udpServerSocket.receive(udpPacket);
+                // receive UDP packet from client
+                udpPacket = new DatagramPacket(buf, buf.length);
+                udpServerSocket.receive(udpPacket);
 
-        // fromClient = new String(
-        // udpPacket.getData(), 0, udpPacket.getLength(), "UTF-8");
-        // System.out.println("This is the requested info: " + fromClient);
+                fromClient = new String(
+                        udpPacket.getData(), 0, udpPacket.getLength(), "UTF-8");
+                System.out.println("This is the requested info: " + fromClient);
+                for (int i = 0; i < inventoryTable.size(); i++) {
+                    if (inventoryTable.get(i).getId().contains(fromClient)) {
+                        toClient = inventoryTable.get(i).toString();
+                        // send the response to the client at "address" and "port"
+                        InetAddress address = udpPacket.getAddress();
+                        int port = udpPacket.getPort();
+                        byte[] buf2 = toClient.getBytes("UTF-8");
+                        udpPacket2 = new DatagramPacket(buf2, buf2.length, address, port);
+                        udpServerSocket.send(udpPacket2);
+                    }
+                }
 
-        // // get the response
-        // toClient = "THIS IS RESPONSE: " + fromClient ;
-        // System.out.println(toClient);
+            } catch (IOException e) {
+                e.printStackTrace();
+                morePackets = false;
+            }
+        }
 
-        // // send the response to the client at "address" and "port"
-        // InetAddress address = udpPacket.getAddress();
-        // int port = udpPacket.getPort();
-        // byte[] buf2 = toClient.getBytes("UTF-8");
-        // udpPacket2 = new DatagramPacket(buf2, buf2.length, address, port);
-        // udpServerSocket.send(udpPacket2);
-
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // morePackets = false;
-        // }
-        // }
-
-        // udpServerSocket.close();
+        udpServerSocket.close();
 
     }
 }
