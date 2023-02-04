@@ -7,7 +7,6 @@ package HW2;
 
 import java.io.*;
 import java.net.*;
-import java.text.Format;
 import java.util.*;
 
 
@@ -29,7 +28,7 @@ public class InventoryServer {
         //Buffered Reader variables to read the inventory csv 
         //Alyssa- /Users/alyssa/Desktop/MSU-Denver/enrolledCourses/CS-3700/Programs/CS3700/HW2/HW02Inventory.csv
         //Jesse - C://Users//jesse//Desktop//Network2023//Repo//CS3700//HW2//HW02Inventory.csv
-        String fileName = "C://Users//jesse//Desktop//Network2023//Repo//CS3700//HW2//HW02Inventory.csv";
+        String fileName = "/Users/alyssa/Desktop/MSU-Denver/enrolledCourses/CS-3700/Programs/CS3700/HW2/HW02Inventory.csv";
         File file = new File(fileName);
         FileReader fileReader = new FileReader(file);
         BufferedReader lineReader = new BufferedReader(fileReader);
@@ -65,40 +64,39 @@ public class InventoryServer {
         }
        
         lineReader.close();
-
         
         
 
 
-    //     byte[] buf = new byte[256];
+        // byte[] buf = new byte[256];
         
-    //     while (morePackets) {
-    //         try {
+        // while (morePackets) {
+        //     try {
 
-    //             // receive UDP packet from client
-    //             udpPacket = new DatagramPacket(buf, buf.length);
-    //             udpServerSocket.receive(udpPacket);
+        //         // receive UDP packet from client
+        //         udpPacket = new DatagramPacket(buf, buf.length);
+        //         udpServerSocket.receive(udpPacket);
 
-    //             fromClient = new String(
-    //             udpPacket.getData(), 0, udpPacket.getLength(), "UTF-8");
+        //         fromClient = new String(
+        //         udpPacket.getData(), 0, udpPacket.getLength(), "UTF-8");
                                                         
-    //             // get the response
-    //             toClient = fromClient.toUpperCase();
+        //         // get the response
+        //         toClient = fromClient.toUpperCase();
                                          
-    //             // send the response to the client at "address" and "port"
-    //             InetAddress address = udpPacket.getAddress();
-    //             int port = udpPacket.getPort();
-    //             byte[] buf2 = toClient.getBytes("UTF-8");
-    //             udpPacket2 = new DatagramPacket(buf2, buf2.length, address, port);
-    //             udpServerSocket.send(udpPacket2);
+        //         // send the response to the client at "address" and "port"
+        //         InetAddress address = udpPacket.getAddress();
+        //         int port = udpPacket.getPort();
+        //         byte[] buf2 = toClient.getBytes("UTF-8");
+        //         udpPacket2 = new DatagramPacket(buf2, buf2.length, address, port);
+        //         udpServerSocket.send(udpPacket2);
 
-    //         } catch (IOException e) {
-    //             e.printStackTrace();
-    //             morePackets = false;
-    //         }
-    //     }
+        //     } catch (IOException e) {
+        //         e.printStackTrace();
+        //         morePackets = false;
+        //     }
+        // }
   
-    //     udpServerSocket.close();
+        // udpServerSocket.close();
 
      }
 }
