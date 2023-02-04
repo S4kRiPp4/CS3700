@@ -2,15 +2,18 @@
  * Alyssa Williams & Jesse Johnstone 
  * HW2 2023
 */
-
 package HW2;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
 
 public class InventoryClient {
     public static void main(String[] args) throws IOException {
+
+        if (args.length != 1) {
+            System.out.println("Usage: java InventoryClient <hostname>");
+            return;
+       }
 
         // create a UDP socket
         DatagramSocket udpSocket = new DatagramSocket();
@@ -62,7 +65,7 @@ public class InventoryClient {
                     InetAddress address = InetAddress.getByName(args[0]);
                     byte[] buf = idInput.getBytes();
                     DatagramPacket udpPacket = new DatagramPacket(buf, buf.length, address,
-                    5140); // 5140 Jesse, 5310 Alyssa
+                    5310); // 5140 Jesse, 5310 Alyssa
                     udpSocket.send(udpPacket);
 
                     // get response
@@ -77,7 +80,7 @@ public class InventoryClient {
                     // TODO: Compute RTT of Query (timestamp of received request - timestamp of
                     // pending request, milliseconds)
                     long rtt = resTS - sendTS;
-                    System.out.println(rtt);
+                    System.out.println("RTT: " + rtt + "ms");
                     // TODO: Once request is received display item information from Server(Item ID,
                     // Item Description, Unit Price, Inventory, RTT of Query)
                     // display response
