@@ -64,7 +64,7 @@ public class InventoryServer {
 
                 fromClient = new String(
                         udpPacket.getData(), 0, udpPacket.getLength(), "UTF-8");
-                System.out.println("This is the requested info: " + fromClient);
+               
                 //Once a packet is received from a Client, retrieve the information relevant to the requested Item ID
                 //from the data structure you used in Step 1 and send back such information to the Client
                 for (int i = 0; i < inventoryTable.size(); i++) {
