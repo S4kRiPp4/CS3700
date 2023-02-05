@@ -1,8 +1,9 @@
 /*  
- * Alyssa Williams & Jesse Johnstone 
- * HW2 2023
+ * CS3700 - Networking and Distributed Computing - Spring 2023
+ * Instructor: Dr. Weiying Zhu
+ * Programmers: Alyssa Williams & Jesse Johnstone 
+ * Description: HW02 - client program
 */
-package HW2;
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -11,19 +12,18 @@ public class InventoryClient {
     public static void main(String[] args) throws IOException {
 
         if (args.length != 1) {
-            System.out.println("Usage: java InventoryClient <hostname>");
-            return;
-       }
+        System.out.println("Usage: java InventoryClient <hostname>");
+        return;
+        }
 
         // create a UDP socket
         DatagramSocket udpSocket = new DatagramSocket();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String fromServer;
-        String idInput;
-        String newReq;
+        String idInput, dnsInput, fromServer, resHeader, newReq, serverRes;
+        long sendTS, resTS, rtt; 
 
-        //Inventroy display table and id keys array 
+        // Inventroy display table and id keys array
         String inventory = "Item ID\t\tItem Description\n" +
                 "00001\t\tNew Inspiron 15\n" +
                 "00002\t\tNew Inspiron 17\n" +
@@ -37,67 +37,58 @@ public class InventoryClient {
         // Display message for user input for DNS of server(read user input as a string,
         // save input as variable)
         System.out.print("Input DNS or IP address of the Server: ");
-        String dnsInput = reader.readLine();
+        dnsInput = reader.readLine().trim();
 
-        String serverIP = "147.153.10.87";
-        dnsInput.trim();
+        // Display table from Server using CSV(display ID and item description)
+        System.out.println(inventory);
 
-        if (!(dnsInput.equals(serverIP))) {
-            System.out.println("Invalid IP address, try again.");
-        } else {
-            // Display table from Server using CSV(display ID and item description)
-            System.out.println("Welcome.");
-            System.out.println(inventory);
-            // Display message and ask user to input ID with item validation(ask user
-            // to re-type if not valid ID, save ID as variable)
-            System.out.print("Enter an Item ID to view the item information: ");
-            while ((idInput = reader.readLine()) != "N") {
-                if (!(inventoryID.contains(idInput))) {
-                    System.out.println("Item ID not found, try again");
-                } else {
-                    System.out.println("Sending datagram to server");
-                    // TODO: Record local time(timestamp) prior to sending request
-                    long sendTS = new Date().getTime();
-                    System.out.println(sendTS);
-                    // TODO: Send request message to server with item ID and DNS of
-                    // server(destination address), for quote
-                    // send request
-                    InetAddress address = InetAddress.getByName(args[0]);
-                    byte[] buf = idInput.getBytes();
-                    DatagramPacket udpPacket = new DatagramPacket(buf, buf.length, address,
-                    5310); // 5140 Jesse, 5310 Alyssa
-                    udpSocket.send(udpPacket);
+        // Display message and ask user to input ID with item validation(ask user
+        // to re-type if not valid ID, save ID as variable)
+        System.out.print("Enter an Item ID to view the item information: ");
+        while ((idInput = reader.readLine()) != "N") {
+            if (!(inventoryID.contains(idInput))) {
+                System.out.print("Item ID not valid, please re-type the Item ID: ");
+            } else {
+                
+                // Record local time(timestamp) prior to sending request
+                sendTS = new Date().getTime();
+               
+                // Send request message to server with item ID to destination address for quote
+                InetAddress address = InetAddress.getByName(args[0]);
+                byte[] buf = idInput.getBytes();
+                DatagramPacket udpPacket = new DatagramPacket(buf, buf.length, address,
+                        5310); // 5140 Jesse, 5310 Alyssa
+                udpSocket.send(udpPacket);
 
-                    // get response
-                    byte[] buf2 = new byte[256];
-                    DatagramPacket udpPacket2 = new DatagramPacket(buf2, buf2.length);
-                    udpSocket.receive(udpPacket2);
-                    // TODO: Record timestamp of received message
-                    System.out.println(idInput);
-                    long resTS = new Date().getTime();
-                    System.out.println(resTS);
+                // get response
+                byte[] buf2 = new byte[256];
+                DatagramPacket udpPacket2 = new DatagramPacket(buf2, buf2.length);
+                udpSocket.receive(udpPacket2);
 
-                    // TODO: Compute RTT of Query (timestamp of received request - timestamp of
-                    // pending request, milliseconds)
-                    long rtt = resTS - sendTS;
-                    System.out.println("RTT: " + rtt + "ms");
-                    // TODO: Once request is received display item information from Server(Item ID,
-                    // Item Description, Unit Price, Inventory, RTT of Query)
-                    // display response
-                    fromServer = new String(udpPacket2.getData(), 0, udpPacket2.getLength());
-                    System.out.println("From Server: " + fromServer);
-                    // TODO: Ask user to continue for new inventory query, if yes repeat process
-                    // else close socket and terminate client program
-                    System.out.println("Request another quote? Y/N: ");
-                    newReq = reader.readLine().trim();
-                    if (newReq.equals("N")) {
-                        break;
-                    }
-                    System.out.println(inventory);
-                    // Display message and ask user to input ID with item validation(ask user
-                    // to re-type if not valid ID, save ID as variable)
-                    System.out.print("Enter an Item ID to view the item information: ");
+                // Record timestamp of received message
+                resTS = new Date().getTime();
+                
+                // Compute RTT of Query (timestamp of received request - timestamp of
+                // pending request, milliseconds)
+                rtt = resTS - sendTS;
+                
+                // Once request is received display item information from server
+                resHeader = "Item ID\t\tItem Description\t\tUnit Price\t\tInventory\t\tRTT of Query";
+                fromServer = new String(udpPacket2.getData(), 0, udpPacket2.getLength());
+                serverRes = fromServer + "\t\t" + rtt + " ms";
+                System.out.println(resHeader);
+                System.out.println(serverRes);
+
+                // Ask user to continue for new inventory query, if N, terminate program
+                System.out.println("Request another quote? Y/N: ");
+                newReq = reader.readLine().trim().toUpperCase();
+                if (newReq.equals("N")) {
+                    break;
                 }
+                System.out.println(inventory);
+                // Display message and ask user to input ID with item validation(ask user
+                // to re-type if not valid ID, save ID as variable)
+                System.out.print("Enter an Item ID to view the item information: ");
             }
         }
 
