@@ -11,11 +11,6 @@ import java.util.*;
 public class InventoryClient {
     public static void main(String[] args) throws IOException {
 
-        if (args.length != 1) {
-        System.out.println("Usage: java InventoryClient <hostname>");
-        return;
-        }
-
         // create a UDP socket
         DatagramSocket udpSocket = new DatagramSocket();
 
@@ -54,7 +49,7 @@ public class InventoryClient {
                 sendTS = new Date().getTime();
                
                 // Send request message to server with item ID to destination address for quote
-                InetAddress address = InetAddress.getByName(args[0]);
+                InetAddress address = InetAddress.getByName(dnsInput);
                 byte[] buf = idInput.getBytes();
                 DatagramPacket udpPacket = new DatagramPacket(buf, buf.length, address,
                         5310); // 5140 Jesse, 5310 Alyssa
