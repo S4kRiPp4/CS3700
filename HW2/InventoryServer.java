@@ -12,7 +12,7 @@ import java.util.*;
 public class InventoryServer {
     public static void main(String[] args) throws IOException {
 
-        DatagramSocket udpServerSocket = new DatagramSocket(5140); // 5140 Jesse, 5310 Alyssa
+        DatagramSocket udpServerSocket = new DatagramSocket(5310); // 5140 Jesse, 5310 Alyssa
         DatagramPacket udpPacket = null, udpPacket2 = null;
 
         String fromClient, toClient;
@@ -21,7 +21,7 @@ public class InventoryServer {
         // Buffered Reader variables to read the inventory csv
         // FILEPATH FOR TURNING IN Alyssa- /home/awill157/HW02/server/HW02Inventory.csv
         // FILEPATH FOR TURNING IN Jesse- /home/jbrott/HW02/server/HW02Inventory.csv
-        String fileName = "/home/jbrott/HW02/server/HW02Inventory.csv";
+        String fileName = "/home/awill157/HW02/server/HW02Inventory.csv";
         File file = new File(fileName);
         FileReader fileReader = new FileReader(file);
         BufferedReader lineReader = new BufferedReader(fileReader);

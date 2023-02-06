@@ -53,7 +53,7 @@ public class InventoryClient {
                 InetAddress address = InetAddress.getByName(dnsInput);
                 byte[] buf = idInput.getBytes();
                 DatagramPacket udpPacket = new DatagramPacket(buf, buf.length, address,
-                        5140); // 5140 Jesse, 5310 Alyssa
+                        5310); // 5140 Jesse, 5310 Alyssa
                 udpSocket.send(udpPacket);
 
                 // get response
