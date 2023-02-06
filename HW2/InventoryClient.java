@@ -18,11 +18,6 @@ public class InventoryClient {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         String idInput, dnsInput, fromServer, resHeader, newReq, serverRes, rttstr;
         long sendTS, resTS, rtt;
-        String id2 = "Item ID";
-        String item2 = "Item Description";
-        String price2 = "Unit Price";
-        String inv2 = "Inventory";
-        String rtt2 = "RTT of Query";
 
         // Inventory display table and id keys array
         String inventory = "Item ID\t\tItem Description\n" +
@@ -74,12 +69,13 @@ public class InventoryClient {
                 rtt = resTS - sendTS;
 
                 // Once request is received display item information from server
-                resHeader = String.format("%-20s" + "%-40s" + "%10s" + "%30s" + "%35s", id2, item2, price2, inv2, rtt2);
+                resHeader = String.format("%-20s" + "%-40s" + "%10s" + "%30s" + "%35s", "Item ID", "Item Description",
+                        "Unit Price", "Inventory", "RTT of Query");
                 fromServer = new String(udpPacket2.getData(), 0, udpPacket2.getLength());
-                Long.toString(rtt);
+                // Formatting rtt to string to include units
                 rttstr = String.format("%35s", Long.toString(rtt) + " ms");
                 serverRes = fromServer + rttstr;
-                // fromServer + "\t\t" + rtt + " ms";
+
                 System.out.println(resHeader);
                 System.out.println(serverRes);
 
