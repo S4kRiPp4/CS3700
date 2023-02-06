@@ -4,6 +4,7 @@
  * Programmers: Alyssa Williams & Jesse Johnstone 
  * Description: HW02 - client program
 */
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -15,10 +16,15 @@ public class InventoryClient {
         DatagramSocket udpSocket = new DatagramSocket();
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        String idInput, dnsInput, fromServer, resHeader, newReq, serverRes;
-        long sendTS, resTS, rtt; 
+        String idInput, dnsInput, fromServer, resHeader, newReq, serverRes, rttstr;
+        long sendTS, resTS, rtt;
+        String id2 = "Item ID";
+        String item2 = "Item Description";
+        String price2 = "Unit Price";
+        String inv2 = "Inventory";
+        String rtt2 = "RTT of Query";
 
-        // Inventroy display table and id keys array
+        // Inventory display table and id keys array
         String inventory = "Item ID\t\tItem Description\n" +
                 "00001\t\tNew Inspiron 15\n" +
                 "00002\t\tNew Inspiron 17\n" +
@@ -44,15 +50,15 @@ public class InventoryClient {
             if (!(inventoryID.contains(idInput))) {
                 System.out.print("Item ID not valid, please re-type the Item ID: ");
             } else {
-                
+
                 // Record local time(timestamp) prior to sending request
                 sendTS = new Date().getTime();
-               
+
                 // Send request message to server with item ID to destination address for quote
                 InetAddress address = InetAddress.getByName(dnsInput);
                 byte[] buf = idInput.getBytes();
                 DatagramPacket udpPacket = new DatagramPacket(buf, buf.length, address,
-                        5310); // 5140 Jesse, 5310 Alyssa
+                        5140); // 5140 Jesse, 5310 Alyssa
                 udpSocket.send(udpPacket);
 
                 // get response
@@ -62,15 +68,18 @@ public class InventoryClient {
 
                 // Record timestamp of received message
                 resTS = new Date().getTime();
-                
+
                 // Compute RTT of Query (timestamp of received request - timestamp of
                 // pending request, milliseconds)
                 rtt = resTS - sendTS;
-                
+
                 // Once request is received display item information from server
-                resHeader = "Item ID\t\tItem Description\t\tUnit Price\t\tInventory\t\tRTT of Query";
+                resHeader = String.format("%-20s" + "%-40s" + "%10s" + "%30s" + "%35s", id2, item2, price2, inv2, rtt2);
                 fromServer = new String(udpPacket2.getData(), 0, udpPacket2.getLength());
-                serverRes = fromServer + "\t\t" + rtt + " ms";
+                Long.toString(rtt);
+                rttstr = String.format("%35s", Long.toString(rtt) + " ms");
+                serverRes = fromServer + rttstr;
+                // fromServer + "\t\t" + rtt + " ms";
                 System.out.println(resHeader);
                 System.out.println(serverRes);
 

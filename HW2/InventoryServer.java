@@ -4,6 +4,7 @@
  * Programmers: Alyssa Williams & Jesse Johnstone 
  * Description: HW02 - server program
 */
+
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -11,7 +12,7 @@ import java.util.*;
 public class InventoryServer {
     public static void main(String[] args) throws IOException {
 
-        DatagramSocket udpServerSocket = new DatagramSocket(5310); // 5140 Jesse, 5310 Alyssa
+        DatagramSocket udpServerSocket = new DatagramSocket(5140); // 5140 Jesse, 5310 Alyssa
         DatagramPacket udpPacket = null, udpPacket2 = null;
 
         String fromClient, toClient;
@@ -20,13 +21,14 @@ public class InventoryServer {
         // Buffered Reader variables to read the inventory csv
         // FILEPATH FOR TURNING IN Alyssa- /home/awill157/HW02/server/HW02Inventory.csv
         // FILEPATH FOR TURNING IN Jesse- /home/jbrott/HW02/server/HW02Inventory.csv
-        String fileName = "/home/awill157/HW02/server/HW02Inventory.csv";
+        String fileName = "/home/jbrott/HW02/server/HW02Inventory.csv";
         File file = new File(fileName);
         FileReader fileReader = new FileReader(file);
         BufferedReader lineReader = new BufferedReader(fileReader);
         String line = "";
 
-        // Inventory variables to create an array list of inventory data from the Inventory
+        // Inventory variables to create an array list of inventory data from the
+        // Inventory
         // class
         ArrayList<String> inventoryData = new ArrayList<>();
         ArrayList<Inventory> inventoryTable = new ArrayList<>();
@@ -53,8 +55,8 @@ public class InventoryServer {
             System.out.println(inventoryTable.get(i));
         }
 
-        
-        // Wait to receive packet from client. Repeat waiting for packet from Client infinitely until exception is caught 
+        // Wait to receive packet from client. Repeat waiting for packet from Client
+        // infinitely until exception is caught
         while (morePackets) {
             byte[] buf = new byte[256];
             try {
@@ -64,9 +66,11 @@ public class InventoryServer {
 
                 fromClient = new String(
                         udpPacket.getData(), 0, udpPacket.getLength(), "UTF-8");
-               
-                //Once a packet is received from a Client, retrieve the information relevant to the requested Item ID
-                //from the data structure you used in Step 1 and send back such information to the Client
+
+                // Once a packet is received from a Client, retrieve the information relevant to
+                // the requested Item ID
+                // from the data structure you used in Step 1 and send back such information to
+                // the Client
                 for (int i = 0; i < inventoryTable.size(); i++) {
                     if (inventoryTable.get(i).getId().contains(fromClient)) {
                         toClient = inventoryTable.get(i).toString();
@@ -100,7 +104,8 @@ class Inventory {
         this.inventory = inventory;
     }
 
-    // getters and setters - get/setID is likely all that will be used in this program. 
+    // getters and setters - get/setID is likely all that will be used in this
+    // program.
     public String getId() {
         return id;
     }
@@ -135,7 +140,8 @@ class Inventory {
 
     @Override
     public String toString() {
-        return id + "\t\t" + description + "\t\t" + price + "\t\t" + inventory;
+        return String.format("%-20s" + "%-40s" + "%10s" + "%30s", id, description, price, inventory);
+
     }
 
 }
