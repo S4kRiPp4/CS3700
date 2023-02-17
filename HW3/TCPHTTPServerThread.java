@@ -10,6 +10,7 @@ import java.io.*;
 
 public class TCPHTTPServerThread extends Thread{
     private Socket clientTCPSocket = null; 
+    
 
     // constructor 
     public TCPHTTPServerThread(Socket socket){
@@ -21,7 +22,7 @@ public class TCPHTTPServerThread extends Thread{
     public void run(){
         try{
             // output socket back to the client 
-            PrintWriter cSocketOut= new PrintWriter(clientTCPSocket.getOutputStream(), true); 
+            PrintWriter cSocketOut = new PrintWriter(clientTCPSocket.getOutputStream(), true); 
 
             // input socket from the client 
             BufferedReader cSocketIn = new BufferedReader(new InputStreamReader(clientTCPSocket.getInputStream()));
@@ -38,7 +39,23 @@ public class TCPHTTPServerThread extends Thread{
                 * If the file specified in the URL does not exit/cannot be open, it is a “404 Not Found” case
                 * Otherwise, it is a “200 OK” case
                 */
-                System.out.print(fromClient);
+                System.out.println(fromClient);
+
+                // switch(status){
+                //     // 200 OK
+                //     case "200": 
+                //         System.out.println("200 OK.");
+                //         break;
+                //     //400 BAD
+                //     case "400": 
+                //         System.out.println("400 BAD");
+                //         break;
+                //     // 404 NOT FOUND 
+                //     case "404": 
+                //         System.out.println("404 NOT FOUND :(");
+                //         break;
+
+                // }
                 
 
                 // TODO: Construct ONE HTTP response message and send it to the HTTP client program over the TCP connection based on the cases above.
@@ -55,15 +72,13 @@ public class TCPHTTPServerThread extends Thread{
                 * <empty line> (**200 OK case ONLY**)
                 */
 
-                toClient = "hi";
-                System.out.print(toClient);
-                //cSocketOut.println(toClient); <-- use this once we have the to client formatted the way we want it. 
-
+                toClient = fromClient;
+                cSocketOut.println(toClient); 
                 // if the incoming message from teh client is N for no, proceed to closure of the thread 
                 if (fromClient.equals("N"))
                     break;
             }
-            // TODOd: Close i/o streams and the TCP socket for the specific Client, and terminate the thread for the specific client. 
+            // Close i/o streams and the TCP socket for the specific Client, and terminate the thread for the specific client. 
             // Hint: when this happens, the parent thread is still alive doing Steps 1 and 2 forever, unless the Server process is killed/terminated. 
             cSocketOut.close();
             cSocketIn.close();
@@ -71,7 +86,5 @@ public class TCPHTTPServerThread extends Thread{
         } catch(Exception e){
             e.printStackTrace();
         }
-        
-        
     }
 }
