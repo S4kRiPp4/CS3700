@@ -20,7 +20,8 @@ public class ClientTCPHTTP {
         BufferedReader sysIn = new BufferedReader(new InputStreamReader(System.in));
         // Ask user for DNS/IP of HTTP server
         System.out.print("Please enter the DNS/IP address: ");
-        host = sysIn.readLine();
+        fromUser = sysIn.readLine();
+        host = fromUser;
 
         // Create TCP connection to HTTP server with the Host Name input by User at the
         // given port
@@ -45,11 +46,12 @@ public class ClientTCPHTTP {
             System.err.println("Couldn't get I/O for the connection to: " + host);
             System.exit(1);
         }
-        
-        while ((fromUser = sysIn.readLine()) != "N") {
-            // Ask the user to input the HTTP method type and save to string variable
-            System.out.print("Enter the HTTP Method type: ");
-            httpMethod = sysIn.readLine().toUpperCase();
+        // Ask the user to input the HTTP method type and save to string variable
+        System.out.print("Enter the HTTP Method type: ");
+        while ((fromUser = sysIn.readLine()) != null) {
+            // set HTTP method type from user input 
+            httpMethod = fromUser.toUpperCase();
+
             // Ask user to input name of the htm file requested and save to string variable
             System.out.print("Enter the name of the htm file: ");
             htmFile = " /" + sysIn.readLine();
@@ -111,6 +113,7 @@ public class ClientTCPHTTP {
                 tcpSocket.close();
                 break;
             }
+            System.out.print("Enter the HTTP Method type: ");
         }
     }
 
