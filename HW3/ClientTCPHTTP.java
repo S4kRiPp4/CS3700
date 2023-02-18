@@ -1,3 +1,4 @@
+
 /*  
  * CS3700 - Networking and Distributed Computing - Spring 2023
  * Instructor: Dr. Weiying Zhu
@@ -13,7 +14,7 @@ public class ClientTCPHTTP {
         Socket tcpSocket = null;
         PrintWriter socketOut = null;
         BufferedReader socketIn = null;
-        String host, fromUser, fromServer, httpMethod, htmFile, httpVersion, userAgent;
+        String host, fromUser, fromServer, httpMethod, file, httpVersion, userAgent, resHead, body;
         long beforeTCP, afterTCP, tcpRtt, beforeFT, afterFT, ftRTT;
         int port = 5310; // 5140 Jesse, 5310 Alyssa
 
@@ -49,23 +50,23 @@ public class ClientTCPHTTP {
         // Ask the user to input the HTTP method type and save to string variable
         System.out.print("Enter the HTTP Method type: ");
         while ((fromUser = sysIn.readLine()) != null) {
-            // set HTTP method type from user input 
+            // set HTTP method type from user input
             httpMethod = fromUser.toUpperCase();
 
             // Ask user to input name of the htm file requested and save to string variable
             System.out.print("Enter the name of the htm file: ");
-            htmFile = " /" + sysIn.readLine();
+            file = sysIn.readLine();
 
             // Ask user to input HTTP Version and save to string variable
             System.out.print("Enter the HTTP Version: ");
             httpVersion = "HTTP/" + sysIn.readLine();
-            
+
             // Ask user to input User-Agent and save to string variable
             System.out.print("Enter the User-Agent: ");
             userAgent = sysIn.readLine();
 
             // From user input, construct ONE HTTP request message
-            fromUser = httpMethod + " " + htmFile + " " + httpVersion + "\r\n" + "Host: " + host + "\r\n"
+            fromUser = httpMethod + " " + file + " " + httpVersion + "\r\n" + "Host: " + host + "\r\n"
                     + "User Agent: " + userAgent + "\r\n" + "\r\n";
             System.out.print(fromUser);
 
@@ -75,31 +76,43 @@ public class ClientTCPHTTP {
             // Send request to the HTTP server program over the TCP connection
             socketOut.println(fromUser);
 
-            // TODO: Receive and interpret the HTTP response message from the HTTP Server
+            // Receive and interpret the HTTP response message from the HTTP Server
             // program line by line
-            if ((fromServer = socketIn.readLine()) != null)
-            {
-                System.out.println(fromServer);
-            }
-            else {
+            if ((fromServer = socketIn.readLine()) != null) {
+                // Capture timestamp after response is received
+                afterFT = new Date().getTime();
+                // Display the RTT (File Transmission Time may be included) of HTTP query
+                // in ms as a single line (e.g., RTT = 1.089 ms)
+                ftRTT = afterFT - beforeFT;
+                System.out.println("File Transmission RTT: " + Long.toString(ftRTT) + " ms");
+                // Display the status line and header lines of the HTTP response message
+                // on the standard output
+                if (fromServer.contains("200")) {
+                    resHead = fromServer + "\r\n" + socketIn.readLine() + "\r\n" + socketIn.readLine() + "\r\n"
+                            + socketIn.readLine() + "\r\n";
+                    System.out.println(resHead);
+                    // TODO: Save the data in the entity body to a .htm file to local directory if
+                    // there is any.
+                    File outFile = new File(file);
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
+                    body = socketIn.readLine() + "\r\n" + socketIn.readLine() + "\r\n" + socketIn.readLine() + "\r\n"
+                            + socketIn.readLine() + "\r\n";
+                    if(outFile.exists()){
+                        writer.write(body);
+                        System.out.println("entity body: " + body + "written to the .htm file!");
+                    } 
+                    writer.close();
+
+                } else {
+                    resHead = fromServer + "\r\n" + socketIn.readLine() + "\r\n" + socketIn.readLine() + "\r\n"
+                            + socketIn.readLine() + "\r\n";
+                    System.out.println(resHead);
+                }
+
+            } else {
                 System.out.println("Server replies nothing!");
                 break;
             }
-
-            // Capture timestamp after response is received
-            afterFT = new Date().getTime();
-
-            // TODO: Display the RTT (File Transmission Time may be included) of HTTP query
-            // in ms as a single line (e.g., RTT = 1.089 ms)
-            ftRTT = afterFT - beforeFT;
-            System.out.println("File Transmission RTT: " + Long.toString(ftRTT) + " ms");
-
-            // TODO: Display the status line and header lines of the HTTP response message
-            // on the standard output
-            
-
-            // TODO: Save the data in the entity body to a .htm file to local directory if
-            // there is any.
 
             // Display a message on the standard output to ask the User whether to
             // continue. If yes, repeat steps 3 through 6. Otherwise, close all i/o streams,
