@@ -33,8 +33,7 @@ public class ClientTCPHTTP {
             socketIn = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
             afterTCP = new Date().getTime();
 
-            // Display the RTT of TCP connection in ms(difference between the moments right
-            // before and after creating socket object).
+            // Display the RTT of TCP connection in ms
             tcpRtt = afterTCP - beforeTCP;
             System.out.println("RTT of TCP connection: " + Long.toString(tcpRtt) + " ms");
 
@@ -74,39 +73,38 @@ public class ClientTCPHTTP {
             beforeFT = new Date().getTime();
 
             // Send request to the HTTP server program over the TCP connection
-            socketOut.println(fromUser);
+            socketOut.print(fromUser);
+            socketOut.flush();
 
-            // Receive and interpret the HTTP response message from the HTTP Server
-            // program line by line
+            // Receive and interpret the HTTP response message from the HTTP Server program
+            // line by line
             if ((fromServer = socketIn.readLine()) != null) {
                 // Capture timestamp after response is received
                 afterFT = new Date().getTime();
-                // Display the RTT (File Transmission Time may be included) of HTTP query
-                // in ms as a single line (e.g., RTT = 1.089 ms)
+                // Display the RTT (File Transmission Time may be included) of HTTP query in ms;
                 ftRTT = afterFT - beforeFT;
                 System.out.println("File Transmission RTT: " + Long.toString(ftRTT) + " ms");
-                // Display the status line and header lines of the HTTP response message
-                // on the standard output
+                // Display the status line and header lines of the HTTP response message on the
+                // standard output
                 if (fromServer.contains("200")) {
                     resHead = fromServer + "\r\n" + socketIn.readLine() + "\r\n" + socketIn.readLine() + "\r\n"
-                            + socketIn.readLine() + "\r\n";
-                    System.out.println(resHead);
-                    // TODO: Save the data in the entity body to a .htm file to local directory if
-                    // there is any.
+                            + socketIn.readLine();
+                    System.out.print(resHead);
+                    // Save the data in the entity body to a .htm file to local directory if there
+                    // is any.
                     File outFile = new File(file);
                     BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
                     body = socketIn.readLine() + "\r\n" + socketIn.readLine() + "\r\n" + socketIn.readLine() + "\r\n"
-                            + socketIn.readLine() + "\r\n";
-                    if(outFile.exists()){
+                            + socketIn.readLine();
+                    if (outFile.exists()) {
                         writer.write(body);
-                        System.out.println("entity body: " + body + "written to the .htm file!");
-                    } 
-                    writer.close();
-
+                        System.out.println("entity body: \r\n" + body + "\r\nwritten to the .htm file!");
+                        writer.close();
+                    }
                 } else {
                     resHead = fromServer + "\r\n" + socketIn.readLine() + "\r\n" + socketIn.readLine() + "\r\n"
-                            + socketIn.readLine() + "\r\n";
-                    System.out.println(resHead);
+                            + socketIn.readLine();
+                    System.out.print(resHead);
                 }
 
             } else {
@@ -117,15 +115,18 @@ public class ClientTCPHTTP {
             // Display a message on the standard output to ask the User whether to
             // continue. If yes, repeat steps 3 through 6. Otherwise, close all i/o streams,
             // TCP connection, and terminate the Client program.
-            System.out.print("Would you like to make another request? Y/N: ");
+            socketOut.flush();
+            System.out.print("\r\nWould you like to make another request? Y/N: ");
             fromUser = sysIn.readLine().toUpperCase();
             if (fromUser.equals("N")) {
+                socketOut.flush();
                 socketOut.close();
                 socketIn.close();
                 sysIn.close();
                 tcpSocket.close();
                 break;
             }
+
             System.out.print("Enter the HTTP Method type: ");
         }
     }
