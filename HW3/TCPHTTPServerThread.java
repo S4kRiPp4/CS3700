@@ -79,13 +79,13 @@ public class TCPHTTPServerThread extends Thread{
                     cSocketOut.print(toClient); 
                     cSocketOut.flush();
                 } else if (!reqMethod.equals("GET")){
-                    status = "400 Bad Request\r\n";
+                    status = " 400 Bad Request\r\n";
                     toClient = httpVersion + status + timeStamp + server; 
                     System.out.println(toClient);
                     cSocketOut.print(toClient); 
                     cSocketOut.flush();
                 } else if (!(file.exists() && file.canRead())){
-                    status = "404 Not Found\r\n";
+                    status = " 404 Not Found\r\n";
                     toClient = httpVersion + status + timeStamp + server; 
                     System.out.println(toClient);
                     cSocketOut.print(toClient); 
