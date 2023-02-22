@@ -62,19 +62,19 @@ public class TCPHTTPServerThread extends Thread {
                     status = " 200 OK\r\n";
                     toClient = httpVersion + status + timeStamp + server + data;
                     System.out.println(toClient);
-                    cSocketOut.print(toClient);
+                    cSocketOut.println(toClient);
                     cSocketOut.flush();
                 } else if (!reqMethod.equals("GET")) {
                     status = " 400 Bad Request\r\n";
                     toClient = httpVersion + status + timeStamp + server;
                     System.out.println(toClient);
-                    cSocketOut.print(toClient);
+                    cSocketOut.println(toClient);
                     cSocketOut.flush();
                 } else if (!(file.exists() && file.canRead())) {
                     status = " 404 Not Found\r\n";
                     toClient = httpVersion + status + timeStamp + server;
                     System.out.println(toClient);
-                    cSocketOut.print(toClient);
+                    cSocketOut.println(toClient);
                     cSocketOut.flush();
                 }
 
