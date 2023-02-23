@@ -1,4 +1,4 @@
-package HW4;
+
 
 /*  
  * CS3700 - Networking and Distributed Computing - Spring 2023
@@ -24,8 +24,9 @@ public class SMTPserver {
             System.err.println("Could not listen on the specified port: " + port);
             System.exit(-1);
         }
-        // Create a new thread for every incoming TCP connection request from a HTTP
-        // client
+       
+        // TODO: Create a new thread for every incoming TCP connection request from a SMTP
+        
         while (listening) {
             new SMTPthread(serverTCPSocket.accept()).start();
         }
