@@ -15,7 +15,7 @@ public class SMTPclient {
         Socket tcpSocket = null;
         PrintWriter socketOut = null;
         BufferedReader socketIn = null;
-        String host, fromUser, fromServer, sendEmail, recEmail, subject, body, helo, mailFrom, rcptTo, data, message,
+        String host, hostConnect, fromUser, fromServer, sendEmail, recEmail, subject, body, helo, mailFrom, rcptTo, data, message,
                 connection;
         long sendRTT, recRTT, rtt;
         int port = 5310; // 5140 Jesse, 5310 Alyssa
@@ -34,8 +34,8 @@ public class SMTPclient {
             socketIn = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
             // TODO: Wait for read, and display "220" response from server (MESSAGE NEEDS TO
             // COME FROM SERVER)
-
-            socketOut.print(host + "\r\n");
+            hostConnect = host + "\r\n";
+            socketOut.print(hostConnect);
             socketOut.flush();
             connection = socketIn.readLine();
             System.out.println(connection);
@@ -54,10 +54,18 @@ public class SMTPclient {
             // Ask user for senders e-mail address and save response
             System.out.print("Enter sender's email address: ");
             sendEmail = sysIn.readLine();
+            while (!(sendEmail.contains("@"))) {
+                System.out.print("Invalid email format (123@example.com). Re-enter sender's email address: ");
+                sendEmail = sysIn.readLine();
+            }
 
             // Ask user for receivers e-mail address and save response
-            System.out.print("Enter receiver's email address: ");
+            System.out.print("Enter recipient email address: ");
             recEmail = sysIn.readLine();
+            while (!(recEmail.contains("@"))) {
+                System.out.print("Invalid email format (123@example.com). Re-enter recipient email address: ");
+                recEmail = sysIn.readLine();
+            }
 
             // Ask user for email subject and save response
             System.out.print("Enter email subject: ");
@@ -77,7 +85,8 @@ public class SMTPclient {
             // TODO: DO we need a while loop for every message???
             // while((fromServer = socketIn.readLine()) != null)
             // {
-            fromServer = socketIn.readLine();
+            fromServer = socketIn.readLine() + "\r\n";
+            System.out.println("FROM SERVER: " + fromServer + "END FS.");
             recRTT = new Date().getTime();
             System.out.println("SMTP Server Response: " + fromServer);
             // Compute RTT of HELO and display to console
@@ -93,7 +102,8 @@ public class SMTPclient {
             sendRTT = new Date().getTime();
             socketOut.print(mailFrom);
             socketOut.flush();
-            fromServer = socketIn.readLine();
+            fromServer = socketIn.readLine() + "\r\n";
+            System.out.println("FROM SERVER: " + fromServer + "END FS.");
             recRTT = new Date().getTime();
             System.out.println("SMTP Server Response: " + fromServer);
             // Compute RTT of mailFrom and display to console
@@ -109,7 +119,8 @@ public class SMTPclient {
             sendRTT = new Date().getTime();
             socketOut.print(rcptTo);
             socketOut.flush();
-            fromServer = socketIn.readLine();
+            fromServer = socketIn.readLine() + "\r\n";
+            System.out.println("FROM SERVER: " + fromServer + "END FS.");
             recRTT = new Date().getTime();
             System.out.println("SMTP Server Response: " + fromServer);
             // Compute RTT of mailFrom and display to console
@@ -123,7 +134,8 @@ public class SMTPclient {
             sendRTT = new Date().getTime();
             socketOut.print(data);
             socketOut.flush();
-            fromServer = socketIn.readLine();
+            fromServer = socketIn.readLine() + "\r\n";
+            System.out.println("FROM SERVER: " + fromServer + "END FS.");
             recRTT = new Date().getTime();
             System.out.println("SMTP Server Response: " + fromServer);
             // Compute RTT of mailFrom and display to console
@@ -140,7 +152,8 @@ public class SMTPclient {
             sendRTT = new Date().getTime();
             socketOut.print(message);
             socketOut.flush();
-            fromServer = socketIn.readLine();
+            fromServer = socketIn.readLine() + "\r\n";
+            System.out.println("FROM SERVER: " + fromServer + "END FS.");
             recRTT = new Date().getTime();
             System.out.println("SMTP Server Response: " + fromServer);
             // Compute RTT of mailFrom and display to console
