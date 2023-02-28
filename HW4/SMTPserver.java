@@ -14,7 +14,7 @@ public class SMTPserver {
     public static void main(String[] args) throws IOException {
         ServerSocket serverTCPSocket = null;
         boolean listening = true;
-        int port = 5310; // 5140 Jesse, 5310 Alyssa
+        int port = 5140; // 5140 Jesse, 5310 Alyssa
 
         // Listen to the given port and wait for a connection request from a HTTP Client
         try {
