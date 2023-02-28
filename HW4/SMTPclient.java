@@ -18,7 +18,7 @@ public class SMTPclient {
         String host, fromUser, fromServer, sendEmail, recEmail, subject, body, helo, mailFrom, rcptTo, data, message,
                 connection;
         long sendRTT, recRTT, rtt;
-        int port = 5310; // 5140 Jesse, 5310 Alyssa
+        int port = 5140; // 5140 Jesse, 5310 Alyssa
 
         BufferedReader sysIn = new BufferedReader(new InputStreamReader(System.in));
 
@@ -68,38 +68,61 @@ public class SMTPclient {
             body = sysIn.readLine();
 
             // Construct and send HELO command to the SMTP server
-            helo = "HELO " + sendEmail + "\r\n\r\n";
+            helo = "HELO " + sendEmail + "\r\n";
             System.out.println(helo);
             sendRTT = new Date().getTime();
             socketOut.print(helo);
             socketOut.flush();
             // Wait for server’s response and display it on the standard output
             // TODO: DO we need a while loop for every message???
-            // while((fromServer = socketIn.readLine()) != null)
-            // {
             fromServer = socketIn.readLine();
-            recRTT = new Date().getTime();
-            System.out.println("SMTP Server Response: " + fromServer);
-            // Compute RTT of HELO and display to console
-            rtt = recRTT - sendRTT;
-            System.out.println("HELO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
-            // }
+            while (fromServer.equals("503 5.5.2 Send hello first")) {
 
+                recRTT = new Date().getTime();
+                System.out.println("SMTP Server Response: " + fromServer);
+                // Compute RTT of HELO and display to console
+                rtt = recRTT - sendRTT;
+                System.out.println("HELO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+                if (fromServer.contains("HELO")) {
+                    recRTT = new Date().getTime();
+                    System.out.println("SMTP Server Response: " + fromServer);
+                    // Compute RTT of HELO and display to console
+                    rtt = recRTT - sendRTT;
+                    System.out.println("HELO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+                    break;
+
+                }
+                
+            }
+           
             // TODO: (b)Construct and send the “MAIL FROM: <sender’s email address>” command
             // to SMTP server, wait for SMTP server’s response and display it on the
             // standard output.
             // TODO: Compute RTT of MAIL FROM
+
             mailFrom = "MAIL FROM: " + sendEmail + "\r\n";
             sendRTT = new Date().getTime();
             socketOut.print(mailFrom);
             socketOut.flush();
             fromServer = socketIn.readLine();
-            recRTT = new Date().getTime();
-            System.out.println("SMTP Server Response: " + fromServer);
-            // Compute RTT of mailFrom and display to console
-            rtt = recRTT - sendRTT;
-            System.out.println("MAIL FROM: Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
-            // }
+            while (fromServer.equals("503 5.5.2 Need mail command")) {
+
+                recRTT = new Date().getTime();
+                System.out.println("SMTP Server Response: " + fromServer);
+                // Compute RTT of mailFrom and display to console
+                rtt = recRTT - sendRTT;
+                System.out.println("MAIL FROM Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+                if (fromServer.contains("MAIL FROM")) {
+                    recRTT = new Date().getTime();
+                    System.out.println("SMTP Server Response: " + fromServer);
+                    // Compute RTT of HELO and display to console
+                    rtt = recRTT - sendRTT;
+                    System.out.println("MAIL FROM Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+                    break;
+
+                }
+            }
+            
 
             // TODO: (c)Construct and send the “RCPT TO: <receiver’s email address>” command
             // to the SMTP server program, wait for SMTP server’s response and display it on
@@ -110,42 +133,71 @@ public class SMTPclient {
             socketOut.print(rcptTo);
             socketOut.flush();
             fromServer = socketIn.readLine();
-            recRTT = new Date().getTime();
-            System.out.println("SMTP Server Response: " + fromServer);
-            // Compute RTT of mailFrom and display to console
-            rtt = recRTT - sendRTT;
-            System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+            while (fromServer.equals("503 5.5.2 Need rcpt command")) {
+                recRTT = new Date().getTime();
+                System.out.println("SMTP Server Response: " + fromServer);
+                // Compute RTT of mailFrom and display to console
 
+                rtt = recRTT - sendRTT;
+                System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+                if (fromServer.contains("RCPT TO")) {
+                recRTT = new Date().getTime();
+                System.out.println("SMTP Server Response: " + fromServer);
+                // Compute RTT of HELO and display to console
+                rtt = recRTT - sendRTT;
+                System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+                break;
+                
+            }
+        }
+           
             // TODO: (d)Construct and send the “DATA” command to the SMTP server program,
             // wait for SMTP server’s response and display it on the standard output
             // TODO: Compute RTT of DATA
-            data = "DATA\r\n";
+            data = "DATA" + "\r\n";
             sendRTT = new Date().getTime();
             socketOut.print(data);
             socketOut.flush();
             fromServer = socketIn.readLine();
-            recRTT = new Date().getTime();
-            System.out.println("SMTP Server Response: " + fromServer);
-            // Compute RTT of mailFrom and display to console
-            rtt = recRTT - sendRTT;
-            System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+
+            while (fromServer.equals("503 5.5.2 Need data command")) {
+
+                recRTT = new Date().getTime();
+                System.out.println("SMTP Server Response: " + fromServer);
+                // Compute RTT of mailFrom and display to console
+                rtt = recRTT - sendRTT;
+                System.out.println("DATA Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+                if (fromServer.contains("DATA")) {
+                    recRTT = new Date().getTime();
+                    System.out.println("SMTP Server Response: " + fromServer);
+                    // Compute RTT of HELO and display to console
+                    rtt = recRTT - sendRTT;
+                    System.out.println("DATA Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+                    break;
+
+                }
+                
+            }
+            
 
             // TODO: (e)Construct and send the Mail message to the SMTP server. The format
             // of this Mail message MUST follow the format
             // TODO: detailed on the slide titled “Mail message format”. Wait for SMTP
             // server’s response and display it on the standard output
             // TODO: Compute RTT of Mail Message
-            message = "To: " + sendEmail + "\r\n" + "From: " + recEmail + "\r\n" + "Subject: " + subject + "\r\n\r\n"
-                    + body + "\r\n" + ".\r\n";
-            sendRTT = new Date().getTime();
-            socketOut.print(message);
-            socketOut.flush();
-            fromServer = socketIn.readLine();
-            recRTT = new Date().getTime();
-            System.out.println("SMTP Server Response: " + fromServer);
-            // Compute RTT of mailFrom and display to console
-            rtt = recRTT - sendRTT;
-            System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+            // message = "To: " + sendEmail + "\r\n" + "From: " + recEmail + "\r\n" +
+            // "Subject: " + subject + "\r\n\r\n"
+            // + body + "\r\n" + ".\r\n";
+            // sendRTT = new Date().getTime();
+            // socketOut.print(message);
+            // socketOut.flush();
+            // fromServer = socketIn.readLine();
+            // recRTT = new Date().getTime();
+            // System.out.println("SMTP Server Response: " + fromServer);
+            // // Compute RTT of mailFrom and display to console
+            // rtt = recRTT - sendRTT;
+            // System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + "
+            // ms\r\n");
 
             /// TODO: Display a prompt message to ask the User whether to continue.
             // If yes, repeat steps 3 through 5. Otherwise, send a “QUIT” command to the
