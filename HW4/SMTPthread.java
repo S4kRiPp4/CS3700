@@ -28,9 +28,8 @@ public class SMTPthread extends Thread {
             BufferedReader cSocketIn = new BufferedReader(new InputStreamReader(clientTCPSocket.getInputStream()));
 
             // variables to display/send text to and from client
-            String fromClient, toClient, msg, helo, mailFrom, rcptTo, data, message, serverIP, clientIP;
+            String fromClient, toClient, msg, serverIP, clientIP;
             Boolean open = true;
-            int count = 0;
 
             // TODO: SMTP client. Send the “220” response including server IP or DNS to
             // client
@@ -42,7 +41,7 @@ public class SMTPthread extends Thread {
 
             // Read requests and send responses until a null is read (happens when a
             // particular client closes the TCP connection)
-            while (open) {                
+            while (open) {
                 // TODO: Implement 3-phase data transfer procedure
                 fromClient = cSocketIn.readLine();
                 System.out.println("FROM CLIENT: " + fromClient);
@@ -52,13 +51,16 @@ public class SMTPthread extends Thread {
                     toClient = "503 5.5.2 Send hello first";
                     cSocketOut.println(toClient);
                     System.out.println("Sent Message: " + toClient);
+
+                    fromClient = cSocketIn.readLine();
+                    System.out.println("FROM CLIENT: " + fromClient);
                 }
                 // TODO:b. Send the “250 <server’s ip> Hello <client’s ip>” response to the SMTP
                 // client.
                 toClient = "250 " + serverIP + " Hello " + clientIP;
                 cSocketOut.println(toClient);
                 System.out.println("Sent Message: " + toClient);
-                
+
                 // TODO:c. Wait for, read, and display the “MAIL FROM: ...” command from the
                 // SMTP client. If the incoming command is NOT
                 fromClient = cSocketIn.readLine();
@@ -69,6 +71,9 @@ public class SMTPthread extends Thread {
                     toClient = "503 5.5.2 Need mail command";
                     cSocketOut.println(toClient);
                     System.out.println("Sent Message: " + toClient);
+
+                    fromClient = cSocketIn.readLine();
+                    System.out.println("FROM CLIENT: " + fromClient);
                 }
                 // TODO:d. Send the “250 2.1.0 Sender OK” response to the SMTP client.
                 toClient = "250 2.1.0 Sender OK";
@@ -85,6 +90,9 @@ public class SMTPthread extends Thread {
                     toClient = "503 5.5.2 Need rcpt command";
                     cSocketOut.println(toClient);
                     System.out.println("Sent Message: " + toClient);
+
+                    fromClient = cSocketIn.readLine();
+                    System.out.println("FROM CLIENT: " + fromClient);
                 }
                 // TODO:f. Send the “250 2.1.5 Recipient OK” response to the SMTP client.
                 toClient = "250 2.1.5 Recipient OK";
@@ -100,7 +108,10 @@ public class SMTPthread extends Thread {
                     // repeat step 3.g.
                     toClient = "503 5.5.2 Need data command";
                     cSocketOut.println(toClient);
-                    System.out.println("Sent Message: " + toClient + "End Transmission.");
+                    System.out.println("Sent Message: " + toClient);
+                    
+                    fromClient = cSocketIn.readLine();
+                    System.out.println("FROM CLIENT: " + fromClient);
                 }
                 // TODO:h. Send the “354 Start mail input; end with <CRLF>.<CRLF>” response to
                 // the SMTP client.
@@ -110,9 +121,9 @@ public class SMTPthread extends Thread {
 
                 // TODO:i. Wait for, read, and display the Mail message from the SMTP client
                 // line by line. (hint: “.” is the ending signature.)
-                while((fromClient = cSocketIn.readLine()) != null){
+                while ((fromClient = cSocketIn.readLine()) != null) {
                     System.out.println(fromClient);
-                    if (fromClient.equals("\r\n.\r\n")) {
+                    if (fromClient.equals(".")) {
                         // TODO:j. Send the “250 Message received and to be delivered” response tothe
                         // SMTP client.
                         toClient = "250 Message received and to be delivered";
@@ -120,8 +131,9 @@ public class SMTPthread extends Thread {
                         break;
                     }
                     fromClient = cSocketIn.readLine();
+                    System.out.println(fromClient);
                 }
-               
+
                 // // TODO: repeat until quit command is read
                 fromClient = cSocketIn.readLine();
                 System.out.println("FROM CLIENT: " + fromClient);
