@@ -19,7 +19,7 @@ public class SMTPclient {
                 data, message,
                 connection;
         long sendRTT, recRTT, rtt;
-        int port = 5310; // 5140 Jesse, 5310 Alyssa
+        int port = 5140; // 5140 Jesse, 5310 Alyssa
 
         BufferedReader sysIn = new BufferedReader(new InputStreamReader(System.in));
 
@@ -91,6 +91,7 @@ public class SMTPclient {
                 // Compute RTT of HELO and display to console
                 rtt = recRTT - sendRTT;
                 System.out.println("HELO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+
             } else {
                 while (fromServer.equals("503 5.5.2 Send hello first")) {
                     recRTT = new Date().getTime();
@@ -98,21 +99,24 @@ public class SMTPclient {
                     // Compute RTT of HELO and display to console
                     rtt = recRTT - sendRTT;
                     System.out.println("HELO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
+
                     socketOut.print(helo);
                     socketOut.flush();
                     fromServer = socketIn.readLine();
                 }
             }
-
+           
             // TODO: (b)Construct and send the “MAIL FROM: <sender’s email address>” command
             // to SMTP server, wait for SMTP server’s response and display it on the
             // standard output.
             // TODO: Compute RTT of MAIL FROM
+
             mailFrom = "MAIL FROM: " + sendEmail + "\r\n";
             sendRTT = new Date().getTime();
             socketOut.print(mailFrom);
             socketOut.flush();
             fromServer = socketIn.readLine();
+
             if (fromServer.equals("250 2.1.0 Sender OK")) {
                 recRTT = new Date().getTime();
                 System.out.println("SMTP Server Response: " + fromServer);
@@ -126,6 +130,7 @@ public class SMTPclient {
                     System.out.println("SMTP Server Response: " + fromServer);
                     // Compute RTT of HELO and display to console
                     rtt = recRTT - sendRTT;
+
                     System.out.println("MAIL FROM: Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
                     socketOut.print(mailFrom);
                     socketOut.flush();
@@ -142,6 +147,7 @@ public class SMTPclient {
             socketOut.print(rcptTo);
             socketOut.flush();
             fromServer = socketIn.readLine();
+
             if (fromServer.equals("250 2.1.5 Recipient OK")) {
                 recRTT = new Date().getTime();
                 System.out.println("SMTP Server Response: " + fromServer);
@@ -162,14 +168,16 @@ public class SMTPclient {
                 }
             }
 
+
             // TODO: (d)Construct and send the “DATA” command to the SMTP server program,
             // wait for SMTP server’s response and display it on the standard output
             // TODO: Compute RTT of DATA
-            data = "DATA\r\n";
+            data = "DATA" + "\r\n";
             sendRTT = new Date().getTime();
             socketOut.print(data);
             socketOut.flush();
             fromServer = socketIn.readLine();
+
             if (fromServer.equals("354 Start mail input; end with <CRLF>.<CRLF>")) {
                 recRTT = new Date().getTime();
                 System.out.println("SMTP Server Response: " + fromServer);
@@ -194,6 +202,7 @@ public class SMTPclient {
             // TODO: detailed on the slide titled “Mail message format”. Wait for SMTP
             // server’s response and display it on the standard output
             // TODO: Compute RTT of Mail Message
+            
             message = "To: " + sendEmail + "\r\n" + "From: " + recEmail + "\r\n" + "Subject: " + subject + "\r\n\r\n"+ body + "\r\r.\r\n";
             System.out.println(message);
             sendRTT = new Date().getTime();

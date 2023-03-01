@@ -42,7 +42,7 @@ public class SMTPthread extends Thread {
             // Read requests and send responses until a null is read (happens when a
             // particular client closes the TCP connection)
             while (open) {
-                // TODO: Implement 3-phase data transfer procedure
+              // TODO: Implement 3-phase data transfer procedure
                 fromClient = cSocketIn.readLine();
                 System.out.println("FROM CLIENT: " + fromClient);
                 while (!(fromClient.contains("HELO"))) {
@@ -140,11 +140,11 @@ public class SMTPthread extends Thread {
                 if (fromClient.contains("QUIT")) {
                     // TODO: upon receiving quit send the "221<servers IP> closing connection" to
                     // client
+                    System.out.println(fromClient);
                     toClient = "221 " + serverIP + " closing connection";
                     cSocketOut.println(toClient);
                     open = false;
                 }
-
             }
 
             // Close i/o streams and the TCP socket for the specific Client, and terminate
