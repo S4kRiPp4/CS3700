@@ -33,8 +33,7 @@ public class SMTPclient {
             tcpSocket = new Socket(host, port);
             socketOut = new PrintWriter(tcpSocket.getOutputStream(), true);
             socketIn = new BufferedReader(new InputStreamReader(tcpSocket.getInputStream()));
-            // TODO: Wait for read, and display "220" response from server (MESSAGE NEEDS TO
-            // COME FROM SERVER)
+            // Wait for read, and display "220" response from server
             hostConnect = host + "\r\n";
             socketOut.print(hostConnect);
             socketOut.flush();
@@ -83,18 +82,17 @@ public class SMTPclient {
             socketOut.print(helo);
             socketOut.flush();
             // Wait for server’s response and display it on the standard output
-            // TODO: DO we need a while loop for every message???
             fromServer = socketIn.readLine();
             if (fromServer.contains("Hello")) {
                 recRTT = new Date().getTime();
-                System.out.println("SMTP Server Response: " + fromServer);
+                System.out.println(fromServer);
                 // Compute RTT of HELO and display to console
                 rtt = recRTT - sendRTT;
                 System.out.println("HELO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
             } else {
                 while (fromServer.equals("503 5.5.2 Send hello first")) {
                     recRTT = new Date().getTime();
-                    System.out.println("SMTP Server Response: " + fromServer);
+                    System.out.println(fromServer);
                     // Compute RTT of HELO and display to console
                     rtt = recRTT - sendRTT;
                     System.out.println("HELO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
@@ -104,10 +102,7 @@ public class SMTPclient {
                 }
             }
 
-            // TODO: (b)Construct and send the “MAIL FROM: <sender’s email address>” command
-            // to SMTP server, wait for SMTP server’s response and display it on the
-            // standard output.
-            // TODO: Compute RTT of MAIL FROM
+            // Construct and send the “MAIL FROM: <sender’s email address>” command and display on std out
             mailFrom = "MAIL FROM: " + sendEmail + "\r\n";
             sendRTT = new Date().getTime();
             socketOut.print(mailFrom);
@@ -115,7 +110,7 @@ public class SMTPclient {
             fromServer = socketIn.readLine();
             if (fromServer.equals("250 2.1.0 Sender OK")) {
                 recRTT = new Date().getTime();
-                System.out.println("SMTP Server Response: " + fromServer);
+                System.out.println(fromServer);
                 // Compute RTT of mailFrom and display to console
                 rtt = recRTT - sendRTT;
                 System.out.println("MAIL FROM: Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
@@ -123,7 +118,7 @@ public class SMTPclient {
             } else {
                 while (fromServer.equals("503 5.5.2 Need mail command")) {
                     recRTT = new Date().getTime();
-                    System.out.println("SMTP Server Response: " + fromServer);
+                    System.out.println(fromServer);
                     // Compute RTT of HELO and display to console
                     rtt = recRTT - sendRTT;
                     System.out.println("MAIL FROM: Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
@@ -133,10 +128,7 @@ public class SMTPclient {
                 }
             }
 
-            // TODO: (c)Construct and send the “RCPT TO: <receiver’s email address>” command
-            // to the SMTP server program, wait for SMTP server’s response and display it on
-            // the standard output.
-            // TODO: Compute RTT of RCPT TO
+            // Construct and send the “RCPT TO: <receiver’s email address>” command and display on std out
             rcptTo = "RCPT TO: " + recEmail + "\r\n";
             sendRTT = new Date().getTime();
             socketOut.print(rcptTo);
@@ -144,7 +136,7 @@ public class SMTPclient {
             fromServer = socketIn.readLine();
             if (fromServer.equals("250 2.1.5 Recipient OK")) {
                 recRTT = new Date().getTime();
-                System.out.println("SMTP Server Response: " + fromServer);
+                System.out.println(fromServer);
                 // Compute RTT of mailFrom and display to console
                 rtt = recRTT - sendRTT;
                 System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
@@ -152,7 +144,7 @@ public class SMTPclient {
             } else {
                 while (fromServer.equals("503 5.5.2 Need rcpt command")) {
                     recRTT = new Date().getTime();
-                    System.out.println("SMTP Server Response: " + fromServer);
+                    System.out.println(fromServer);
                     // Compute RTT of mailFrom and display to console
                     rtt = recRTT - sendRTT;
                     System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
@@ -162,9 +154,7 @@ public class SMTPclient {
                 }
             }
 
-            // TODO: (d)Construct and send the “DATA” command to the SMTP server program,
-            // wait for SMTP server’s response and display it on the standard output
-            // TODO: Compute RTT of DATA
+            // Construct and send the “DATA” command and display on std out
             data = "DATA\r\n";
             sendRTT = new Date().getTime();
             socketOut.print(data);
@@ -172,14 +162,14 @@ public class SMTPclient {
             fromServer = socketIn.readLine();
             if (fromServer.equals("354 Start mail input; end with <CRLF>.<CRLF>")) {
                 recRTT = new Date().getTime();
-                System.out.println("SMTP Server Response: " + fromServer);
+                System.out.println(fromServer);
                 // Compute RTT of mailFrom and display to console
                 rtt = recRTT - sendRTT;
                 System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
             } else {
                 while (fromServer.equals("503 5.5.2 Need data command")) {
                     recRTT = new Date().getTime();
-                    System.out.println("SMTP Server Response: " + fromServer);
+                    System.out.println(fromServer);
                     // Compute RTT of mailFrom and display to console
                     rtt = recRTT - sendRTT;
                     System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + " ms\r\n");
@@ -189,11 +179,7 @@ public class SMTPclient {
                 }
             }
 
-            // TODO: (e)Construct and send the Mail message to the SMTP server. The format
-            // of this Mail message MUST follow the format
-            // TODO: detailed on the slide titled “Mail message format”. Wait for SMTP
-            // server’s response and display it on the standard output
-            // TODO: Compute RTT of Mail Message
+            // Construct and send the Mail message to the SMTP server
             message = "To: " + sendEmail + "\r\n" + "From: " + recEmail + "\r\n" + "Subject: " + subject + "\r\n\r\n"+ body + "\r\n\r\n.\r\n";
             System.out.println(message);
             sendRTT = new Date().getTime();
@@ -201,15 +187,14 @@ public class SMTPclient {
             socketOut.flush();
             fromServer = socketIn.readLine();
             recRTT = new Date().getTime();
-            System.out.println("SMTP Server Response: " + fromServer);
+            System.out.println(fromServer);
             // Compute RTT of mailFrom and display to console
             rtt = recRTT - sendRTT;
             System.out.println("RCPT TO Transmission RTT: " + Long.toString(rtt) + "ms\r\n");
 
-            /// TODO: Display a prompt message to ask the User whether to continue.
-            // If yes, repeat steps 3 through 5. Otherwise, send a “QUIT” command to the
-            /// SMTP server, display SMTP Server’s response, close TCP
-            // connection, and terminate the Client program.
+            // Display a prompt message to ask the User whether to continue.
+            // If "N" send a “QUIT” command to the server, display SMTP Server’s response, close TCP
+            // connection, and terminate the Client program, otherwise continue.
             System.out.print("\r\nWould you like to continue? Y/N: ");
             fromUser = sysIn.readLine().toUpperCase();
             if (fromUser.equals("N")) {
