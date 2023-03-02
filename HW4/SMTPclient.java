@@ -194,7 +194,7 @@ public class SMTPclient {
             // TODO: detailed on the slide titled “Mail message format”. Wait for SMTP
             // server’s response and display it on the standard output
             // TODO: Compute RTT of Mail Message
-            message = "To: " + sendEmail + "\r\n" + "From: " + recEmail + "\r\n" + "Subject: " + subject + "\r\n\r\n"+ body + "\r\r.\r\n";
+            message = "To: " + sendEmail + "\r\n" + "From: " + recEmail + "\r\n" + "Subject: " + subject + "\r\n\r\n"+ body + "\r\n\r\n.\r\n";
             System.out.println(message);
             sendRTT = new Date().getTime();
             socketOut.print(message);
@@ -216,10 +216,8 @@ public class SMTPclient {
                 String quit = "QUIT" + "\r\n";
                 socketOut.print(quit);
                 socketOut.flush();
-                while ((fromServer = socketIn.readLine()) != null) {
-                    System.out.println(fromServer);
-                    break;
-                }
+                fromServer = socketIn.readLine();
+                System.out.println(fromServer);
                 socketOut.close();
                 socketIn.close();
                 sysIn.close();

@@ -41,9 +41,10 @@ public class SMTPthread extends Thread {
 
             // Read requests and send responses until a null is read (happens when a
             // particular client closes the TCP connection)
+            // TODO: Implement 3-phase data transfer procedure
+            fromClient = cSocketIn.readLine();
             while (open) {
-                // TODO: Implement 3-phase data transfer procedure
-                fromClient = cSocketIn.readLine();
+                
                 System.out.println("FROM CLIENT: " + fromClient);
                 while (!(fromClient.contains("HELO"))) {
                     // TODO:...”, sends “503 5.5.2 Send hello first” response to the SMTP client and
@@ -109,7 +110,7 @@ public class SMTPthread extends Thread {
                     toClient = "503 5.5.2 Need data command";
                     cSocketOut.println(toClient);
                     System.out.println("Sent Message: " + toClient);
-                    
+
                     fromClient = cSocketIn.readLine();
                     System.out.println("FROM CLIENT: " + fromClient);
                 }
@@ -121,17 +122,26 @@ public class SMTPthread extends Thread {
 
                 // TODO:i. Wait for, read, and display the Mail message from the SMTP client
                 // line by line. (hint: “.” is the ending signature.)
+                boolean crlf = false;
                 while ((fromClient = cSocketIn.readLine()) != null) {
                     System.out.println(fromClient);
-                    if (fromClient.equals(".")) {
+                    if (crlf && fromClient.equals(".")) {
                         // TODO:j. Send the “250 Message received and to be delivered” response tothe
                         // SMTP client.
                         toClient = "250 Message received and to be delivered";
                         cSocketOut.println(toClient);
                         break;
+                    } else {
+                        if (fromClient.length() == 0) {
+                            crlf = true;
+                            System.out.println("CRLF FOUND!");
+                        } else {
+                            crlf = false;
+                            System.out.println("THE CRLF WAS RESET");
+                        }
+
                     }
-                    fromClient = cSocketIn.readLine();
-                    System.out.println(fromClient);
+                    System.out.println("LOOP WAITING ON INPUT");
                 }
 
                 // // TODO: repeat until quit command is read
