@@ -8,7 +8,10 @@ public class LCP {
     private static final File FILE_NAME = new File("HW10\\topo.txt");
     private static Scanner sc = new Scanner(System.in);
     private static int cost[][];
-
+    ArrayList<Integer> n_prime = new ArrayList<>(); // data type? 
+    ArrayList<Integer> y_prime;
+    private static int[] D; 
+    private static int[] p;
     // constructor to initialize cost matrix with infinity and 0s on the diagonal
     public LCP(int n) throws IOException {
         if (n < MIN_NODES) {
@@ -25,7 +28,11 @@ public class LCP {
                     }
                 }
             }
+            D = new int[n]; 
+            p = new int[n];
+            n_prime.add(0); // adding the first node 
             initCostMatrix();
+            
         }
 
     }
@@ -48,6 +55,11 @@ public class LCP {
                 cost[y][x] = c; 
             }
             printCostMatrix();
+
+            for(int i=0; i <D.length; i++){
+                D[i] = cost[0][i];
+            }
+            printD();
         } catch (IOException e) {
             e.printStackTrace();
         } finally{ 
@@ -62,6 +74,12 @@ public class LCP {
                 System.out.print(cost[i][j] + " ");
             }
             System.out.println();
+        }
+    }
+
+    private void printD(){
+        for(int i= 0; i< D.length; i++){
+            System.out.print(D[i] + " ");
         }
     }
 
