@@ -1,3 +1,10 @@
+/*  
+ * CS3700 - Networking and Distributed Computing - Spring 2023
+ * Instructor: Dr. Weiying Zhu
+ * Programmers: Alyssa Williams & Jesse Johnstone 
+ * Description: HW10 - Dijkstra’s Algorithm & Forwarding Table
+*/
+
 package HW10;
 
 import java.io.*;
@@ -30,7 +37,7 @@ public class LCP {
             }
             D = new int[n]; 
             p = new int[n];
-            n_prime.add(0); // adding the first node 
+            n_prime.add(0); // adding the first node might not be right
             initCostMatrix();
             
         }
@@ -77,6 +84,7 @@ public class LCP {
         }
     }
 
+    // Method prints the least cost path array D
     private void printD(){
         for(int i= 0; i< D.length; i++){
             System.out.print(D[i] + " ");
