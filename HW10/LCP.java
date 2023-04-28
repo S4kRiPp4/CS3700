@@ -5,6 +5,27 @@
  * Description: HW10 - Dijkstra’s Algorithm & Forwarding Table
 */
 
+/*  
+ * Dijkstgra's Algorithm Pseudocode
+ * 
+ * Initialization:
+ * N' = null; Y' = empty set;
+ * for all nodes i 
+ *      if i adjacent to u 
+ *          then D(i) = c(u,i), p(i) = u
+ *      else D(i) = infinity 
+ * 
+ * Main Algorithm: 
+ * LOOP
+ * find k not in N' such that D(k) is a minimum
+ * add node k to N'
+ * add edge (p(k), k) to Y' 
+ * update D(i) and p(i) for all adjacent to k and not in N'
+ *      if D(k) + c(k,i) < D(i)
+ *          then D(i) = D(k) + c(k,i) and p(i) = k
+ * UNITL ALL NODES IN N'
+ */
+
 package HW10;
 
 import java.io.*;
@@ -16,9 +37,10 @@ public class LCP {
     private static Scanner sc = new Scanner(System.in);
     private static int cost[][];
     ArrayList<Integer> n_prime = new ArrayList<>(); // data type? 
-    ArrayList<Integer> y_prime;
+    ArrayList<Integer[]> y_prime;
     private static int[] D; 
-    private static int[] p;
+    private static String[] p;
+
     // constructor to initialize cost matrix with infinity and 0s on the diagonal
     public LCP(int n) throws IOException {
         if (n < MIN_NODES) {
@@ -36,17 +58,19 @@ public class LCP {
                 }
             }
             D = new int[n]; 
-            p = new int[n];
-            n_prime.add(0); // adding the first node might not be right
-            initCostMatrix();
+            p = new String[n];
+            initialize();
             
         }
 
     }
 
-    // Method reads topo.txt and updates the cost matrix to have the cost values
-    // associated with the links in the file
-    private void initCostMatrix() throws IOException {
+    
+
+    // Method initializes all data structures for Dijkstra's ALgorithm 
+    private void initialize() throws IOException {
+
+        // reads topo.txt and updates the cost matrix to have the cost values associated with the links in the file
         FileReader fr = new FileReader(FILE_NAME);
         BufferedReader br = new BufferedReader(fr); 
         String line = null; 
@@ -58,15 +82,33 @@ public class LCP {
                 x = Integer.parseInt(tmp[0].trim());
                 y = Integer.parseInt(tmp[1].trim());
                 c = Integer.parseInt(tmp[2].trim());
+                // TODO: add error handling for if cost given is < 0. Need to alert user what error the line is on and re-ask user for nodes and start process over 
                 cost[x][y] = c;
                 cost[y][x] = c; 
             }
-            printCostMatrix();
-
+            printCostMatrix(); // TODO: remove before turning in 
+            // TODO: Initialize N' to have only V0
+            n_prime.add(cost.length - (cost.length));
+            // TODO: Initialize Y' to be an empty set
+            y_prime = new ArrayList<>();
+            // Initialize D with the first row of cost matrix as starting cost values 
             for(int i=0; i <D.length; i++){
                 D[i] = cost[0][i];
             }
-            printD();
+    
+
+            // Initialize p with predecessor values - aka if c(u,i) is not infinity then p(i) = u
+            for(int i=0; i <p.length; i++){
+                if(cost[0][i] == 0 || cost[0][i] == Integer.MAX_VALUE){
+                    p[i] = "-";
+                } else {
+                    p[i] = Integer.toString(0); 
+                    
+                }
+                
+            }
+            // Print the initialization results
+            printLCPResults();
         } catch (IOException e) {
             e.printStackTrace();
         } finally{ 
@@ -84,13 +126,34 @@ public class LCP {
         }
     }
 
-    // Method prints the least cost path array D
-    private void printD(){
-        for(int i= 0; i< D.length; i++){
-            System.out.print(D[i] + " ");
-        }
-    }
+    
 
+    // TODO: As the intermediate results, at the end of Initialization and each iteration of the Loop, display the set N', the set Y', vector D and vector p 
+    private void printLCPResults(){
+        // TODO: Print set N' 
+        System.out.println("The set N': " + n_prime.toString());
+
+        // TODO: Print set Y'
+        System.out.println("The set Y': " + y_prime.toString());
+
+        // Print the least cost path array D
+        System.out.println("Distance vector D: " + Arrays.toString(D));
+
+        // Prints the predecessor node array p
+        System.out.println("Predecessor vector p: " + Arrays.toString(p));
+
+    }
+    
+    /* 
+     * TODO: Once least path tree has been identified build up the forwarding table and Display in the format:
+     * Destination\t\tLink
+     * V0\t\t(V0, ...)
+     * V1\t\t(V1, ...)
+     * ... 
+     * Vn-1\t\t(Vn-1, ...)
+     */
+
+     
     public static void main(String[] args) throws IOException {
 
         // Get user input for number of nodes - validate that user input is at least
