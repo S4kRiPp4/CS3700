@@ -86,17 +86,18 @@ public class LCP {
                 cost[x][y] = c;
                 cost[y][x] = c; 
             }
-            printCostMatrix(); // TODO: remove before turning in 
-            // TODO: Initialize N' to have only V0
+            printCostMatrix(); // TODO: remove before turning in ? 
+            // Initialize N' to have only V0
             n_prime.add(cost.length - (cost.length));
-            // TODO: Initialize Y' to be an empty set
+
+            //Initialize Y' to be an empty set
             y_prime = new ArrayList<>();
+
             // Initialize D with the first row of cost matrix as starting cost values 
             for(int i=0; i <D.length; i++){
                 D[i] = cost[0][i];
             }
     
-
             // Initialize p with predecessor values - aka if c(u,i) is not infinity then p(i) = u
             for(int i=0; i <p.length; i++){
                 if(cost[0][i] == 0 || cost[0][i] == Integer.MAX_VALUE){
@@ -116,7 +117,7 @@ public class LCP {
         }
     }
 
-    // Method prints cost matrix
+    // Method prints cost matrix -- TODO: might not need this in submission 
     private void printCostMatrix() {
         for (int i = 0; i < cost.length; i++) {
             for (int j = 0; j < cost.length; j++) {
@@ -143,6 +144,16 @@ public class LCP {
         System.out.println("Predecessor vector p: " + Arrays.toString(p));
 
     }
+
+    // TODO: Build run() method for main algorithm logic 
+    // TODO: Loop through nodes and until all nodes are in N' update data structures 
+    // TODO: find k not in N' such that D(k) is a minimum
+    // TODO: add node k to N'
+    // TODO: add edge (p(k), k) to Y' 
+    // TODO: update D(i) and p(i) for all adjacent to k and not in N'
+    // TODO:      if D(k) + c(k,i) < D(i)
+    // TODO:          then D(i) = D(k) + c(k,i) and p(i) = k
+    // TODO: UNITL ALL NODES IN N'
     
     /* 
      * TODO: Once least path tree has been identified build up the forwarding table and Display in the format:
