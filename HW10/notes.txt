@@ -1,0 +1,15 @@
+program that can run on V0 
+
+inititialize matrix first with 0(diagonal) or infinity value 
+while reading topo.txt we set the cost matrix withthe actual cost value.
+    -- initialization run is initializing the direct links ONLY 
+every line will have the two nodes and the cost separated by a tab
+display variables after initialization and at the end of each iterationg
+
+
+// variables 
+cost - 2d array matrix 
+n_prime - variable in size array list, it is the set of nodes whose lcp is known, initially just {v0(u?)}
+y_prime - variable in size array list, it is the set of edges that have been discovered, initially empty 
+D - fixed size (nodes) static array, this a current cost table from the source to i, initially is the top row of the cost matrix
+p - fixed size (nodes) static array, this is a table that shows the last node along path source to i  
