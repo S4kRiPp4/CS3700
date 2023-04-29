@@ -9,10 +9,10 @@
  * Dijkstgra's Algorithm Pseudocode
  * 
  * Initialization:
- * N' = null; Y' = empty set;
+ * N' = {V0}; Y' = empty set;
  * for all nodes i 
- *      if i adjacent to u 
- *          then D(i) = c(u,i), p(i) = u
+ *      if i adjacent to V0 
+ *          then D(i) = c(V0,i), p(i) = V0
  *      else D(i) = infinity 
  * 
  * Main Algorithm: 
@@ -36,8 +36,8 @@ public class LCP {
     private static final File FILE_NAME = new File("HW10\\topo.txt");
     private static Scanner sc = new Scanner(System.in);
     private static int cost[][];
-    ArrayList<Integer> n_prime = new ArrayList<>(); // data type? 
-    ArrayList<Integer[]> y_prime;
+    ArrayList<String> n_prime; // TODO: maybe need to change data type? 
+    ArrayList<String[]> y_prime; // TODO: [[0,1],[0,2],....] maybe?
     private static int[] D; 
     private static String[] p;
 
@@ -67,7 +67,7 @@ public class LCP {
 
     
 
-    // Method initializes all data structures for Dijkstra's ALgorithm 
+    // Method initializes all data structures for Dijkstra's Algorithm 
     private void initialize() throws IOException {
 
         // reads topo.txt and updates the cost matrix to have the cost values associated with the links in the file
@@ -87,8 +87,10 @@ public class LCP {
                 cost[y][x] = c; 
             }
             printCostMatrix(); // TODO: remove before turning in ? 
+            
             // Initialize N' to have only V0
-            n_prime.add(cost.length - (cost.length));
+            n_prime = new ArrayList<>();
+            n_prime.add("V0");
 
             //Initialize Y' to be an empty set
             y_prime = new ArrayList<>();
@@ -98,12 +100,12 @@ public class LCP {
                 D[i] = cost[0][i];
             }
     
-            // Initialize p with predecessor values - aka if c(u,i) is not infinity then p(i) = u
+            // Initialize p with predecessor values - aka if c(V0,i) is not infinity then p(i) = V0
             for(int i=0; i <p.length; i++){
                 if(cost[0][i] == 0 || cost[0][i] == Integer.MAX_VALUE){
                     p[i] = "-";
                 } else {
-                    p[i] = Integer.toString(0); 
+                    p[i] = "V0"; // TODO: MIGHT need to change but maybe not
                     
                 }
                 
@@ -145,7 +147,7 @@ public class LCP {
 
     }
 
-    // TODO: Build run() method for main algorithm logic 
+    // TODOd: Build run() method for main algorithm logic 
     // TODO: Loop through nodes and until all nodes are in N' update data structures 
     // TODO: find k not in N' such that D(k) is a minimum
     // TODO: add node k to N'
@@ -154,6 +156,21 @@ public class LCP {
     // TODO:      if D(k) + c(k,i) < D(i)
     // TODO:          then D(i) = D(k) + c(k,i) and p(i) = k
     // TODO: UNITL ALL NODES IN N'
+    
+    public void run(){
+
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     /* 
      * TODO: Once least path tree has been identified build up the forwarding table and Display in the format:
