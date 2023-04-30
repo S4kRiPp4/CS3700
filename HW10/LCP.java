@@ -33,11 +33,11 @@ import java.util.*;
 
 public class LCP {
     private static final int MIN_NODES = 2;
-    private static final File FILE_NAME = new File("HW10\\topo.txt"); // TODO: turnin path - "topo.txt" mac/linux path- HW10/topo.txt windows path- HW10\\topo.txt 
+    private static final File FILE_NAME = new File("HW10/topo.txt"); // TODO: turnin path - "topo.txt" mac/linux path- HW10/topo.txt windows path- HW10\\topo.txt 
     private static Scanner sc = new Scanner(System.in);
     private static int cost[][];
-    ArrayList<String> n_prime; // TODO: maybe need to change data type? 
-    ArrayList<String[]> y_prime; // TODO: [[0,1],[0,2],....] maybe?
+    ArrayList<Integer> n_prime; 
+    ArrayList<String[]> y_prime; 
     private static int[] D; 
     private static String[] p;
 
@@ -76,21 +76,30 @@ public class LCP {
         String line = null; 
         String[] tmp;  
         int x,y,c; 
+        int errorLine = 1; 
         try {
             while((line = br.readLine())!=null){
                 tmp = line.split("\t");
                 x = Integer.parseInt(tmp[0].trim());
                 y = Integer.parseInt(tmp[1].trim());
                 c = Integer.parseInt(tmp[2].trim());
-                // TODO: add error handling for if cost given is < 0. Need to alert user what error the line is on and re-ask user for nodes and start process over 
+                
+                // TODO: NOT WORKING PROPERLY Check if the cost is negative - alert user what error the line was on and start process over. 
+                if (c < 0) {
+                    System.out.println("Error: Negative cost value found on line " + errorLine + ". Please fix the input file and try again.");
+                    br.close();
+                    main(null); // Call the main method to restart the process
+                    return; // Terminate the current initialize() method
+                }
                 cost[x][y] = c;
                 cost[y][x] = c; 
+                errorLine++;
             }
-            printCostMatrix(); // TODO: remove before turning in ? 
+            // printCostMatrix(); // remove before turning in 
             
             // Initialize N' to have only V0
             n_prime = new ArrayList<>();
-            n_prime.add("V0");
+            n_prime.add(0);
 
             //Initialize Y' to be an empty set
             y_prime = new ArrayList<>();
@@ -105,12 +114,13 @@ public class LCP {
                 if(cost[0][i] == 0 || cost[0][i] == Integer.MAX_VALUE){
                     p[i] = "-";
                 } else {
-                    p[i] = "V0"; // TODO: MIGHT need to change but maybe not
+                    p[i] = "V0"; 
                     
                 }
                 
             }
             // Print the initialization results
+            System.out.println("Initialization Results");
             printLCPResults();
         } catch (IOException e) {
             e.printStackTrace();
@@ -119,7 +129,7 @@ public class LCP {
         }
     }
 
-    // Method prints cost matrix -- TODO: might not need this in submission 
+    // Method prints cost matrix -- not needed for submission but helpful for testing 
     private void printCostMatrix() {
         for (int i = 0; i < cost.length; i++) {
             for (int j = 0; j < cost.length; j++) {
@@ -131,67 +141,127 @@ public class LCP {
 
     
 
-    // TODO: As the intermediate results, at the end of Initialization and each iteration of the Loop, display the set N', the set Y', vector D and vector p 
+    // As the intermediate results, at the end of Initialization and each iteration of the Loop, display the set N', the set Y', vector D and vector p 
     private void printLCPResults(){
-        // TODO: Print set N' 
-        System.out.println("The set N': " + n_prime.toString());
+        // Print set N' 
+        System.out.print("The set N': [");
+        for (int i = 0; i < n_prime.size(); i++) {
+            System.out.print("V" + n_prime.get(i));
+            if (i < n_prime.size() - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println("]");
 
-        // TODO: Print set Y'
-        System.out.println("The set Y': " + y_prime.toString());
+        // Print set Y'
+        System.out.print("The set Y': [");
+        for (int i = 0; i < y_prime.size(); i++) {
+            String[] edge = y_prime.get(i);
+            System.out.print(Arrays.toString(edge));
+            if (i < y_prime.size() - 1) {
+                System.out.print(", ");
+            }
+        }
+        System.out.println("]");
 
         // Print the least cost path array D
         System.out.println("Distance vector D: " + Arrays.toString(D));
 
         // Prints the predecessor node array p
-        System.out.println("Predecessor vector p: " + Arrays.toString(p));
+        System.out.println("Predecessor vector p: " + Arrays.toString(p) + "\n");
 
     }
 
-    // TODOd: Build run() method for main algorithm logic 
-    // TODO: Loop through nodes and until all nodes are in N' update data structures 
-    // TODO: find k not in N' such that D(k) is a minimum
-    // TODO: add node k to N'
-    // TODO: add edge (p(k), k) to Y' 
-    // TODO: update D(i) and p(i) for all adjacent to k and not in N'
-    // TODO:      if D(k) + c(k,i) < D(i)
-    // TODO:          then D(i) = D(k) + c(k,i) and p(i) = k
-    // TODO: UNITL ALL NODES IN N'
-    
-    // public void run(){
 
-    // }
+    // Helper method to find k not in N' such that D(k) is a minimum
+    private int findMinIndex(int[] D, ArrayList<Integer> n_prime) {
+        int minIndex = -1;
+        int minValue = Integer.MAX_VALUE;
+    
+        for (int i = 0; i < D.length; i++) {
+            if (!n_prime.contains(i) && D[i] < minValue) {
+                minValue = D[i];
+                minIndex = i;
+            }
+        }
+    
+        return minIndex;
+    }
+    
+    // Method for main algorithm logic 
+    public void run(int n){
+        
+        int iteration = 0;
+        // Loop through nodes and until all nodes are in N' update data structures 
+        while (n_prime.size() < n){
+            
+            // update the iteration count
+            iteration++;
+            // find k not in N' such that D(k) is a minimum
+            int k = findMinIndex(D, n_prime); // index of minimum node at each iteration
+            
+            // add node k to N'
+            n_prime.add(k);
+            // add edge (p(k), k) to Y' 
+            String[] edge = {p[k], "V"+Integer.toString(k)};
+            y_prime.add(edge);
+            
+            // Update D(i) and p(i) for all nodes adjacent to k and not in N'
+            for (int i = 0; i < cost[k].length; i++) {
+                // Check if node i is adjacent to k and not in N'
+                if ((cost[k][i] != 0 && cost[k][i] != Integer.MAX_VALUE) && !n_prime.contains(i)) {
+                    // If D(k) + c(k,i) < D(i), update D(i) and p(i)
+                    if (D[k] + cost[k][i] < D[i]) {
+                        D[i] = D[k] + cost[k][i];
+                        p[i] = "V" + Integer.toString(k);
+                    }
+                }
+            }
+            
+            // print loop results 
+            System.out.println("Intermediate results for iteration " + iteration);
+            printLCPResults();
+        }
+
+    }
     
     
     
+
+    // Method to print the forwarding table and Display in the required format - based on pseudo code from slide 57
+     public void printForwardingTable() {
+        System.out.println("Forwarding Table:");
+        System.out.println("Destination\tLink");
     
-    
-    
-    
-    
-    
-    
-    
-    
-    /* 
-     * TODO: Once least path tree has been identified build up the forwarding table and Display in the format:
-     * Destination\t\tLink
-     * V0\t\t(V0, ...)
-     * V1\t\t(V1, ...)
-     * ... 
-     * Vn-1\t\t(Vn-1, ...)
-     */
+        // loop through predecessor array p
+        for (int i = 0; i < p.length; i++) {
+            // i is in N' and i is not the source node V0
+            if (i != 0 && n_prime.contains(i)) { 
+                int j = i;
+                // Continue until p(j) is equal to V0
+                while (!p[j].equals("V0")) { 
+                    // Get the integer part of the predecessor node's string representation
+                    j = Integer.parseInt(p[j].substring(1)); 
+                }
+                
+                String destination = "V" + i;
+                String link = "(V0, V" + j + ")";
+                System.out.println(destination + "\t\t" + link);
+            }
+        }
+    }
 
      
     public static void main(String[] args) throws IOException {
 
-        // Get user input for number of nodes - validate that user input is at least
-        // MIN_NODES
+        // Get user input for number of nodes - validate that user input is at least MIN_NODES
 
         System.out.println("How many routers are in your network? (2 minimum): ");
         int nodeSize = sc.nextInt();
 
         LCP lcp = new LCP(nodeSize);
-
+        lcp.run(nodeSize);
+        lcp.printForwardingTable();
     }
 
 }
