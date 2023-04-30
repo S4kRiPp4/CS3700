@@ -26,14 +26,14 @@
  * UNITL ALL NODES IN N'
  */
 
-package HW10;
+package HW10; //TODO: remove before adding to server to turn in 
 
 import java.io.*;
 import java.util.*;
 
 public class LCP {
     private static final int MIN_NODES = 2;
-    private static final File FILE_NAME = new File("HW10\\topo.txt");
+    private static final File FILE_NAME = new File("HW10\\topo.txt"); // TODO: turnin path - "topo.txt" mac/linux path- HW10/topo.txt windows path- HW10\\topo.txt 
     private static Scanner sc = new Scanner(System.in);
     private static int cost[][];
     ArrayList<String> n_prime; // TODO: maybe need to change data type? 
@@ -157,9 +157,9 @@ public class LCP {
     // TODO:          then D(i) = D(k) + c(k,i) and p(i) = k
     // TODO: UNITL ALL NODES IN N'
     
-    public void run(){
+    // public void run(){
 
-    }
+    // }
     
     
     
