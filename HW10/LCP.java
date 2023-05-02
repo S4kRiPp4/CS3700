@@ -26,9 +26,7 @@
  * UNITL ALL NODES IN N'
  */
 
-package HW10; //TODO: remove before adding to server to turn in 
-
-import java.io.*;
+ import java.io.*;
 import java.util.*;
 
 public class LCP {
@@ -68,7 +66,6 @@ public class LCP {
 
         }
 
-        printCostMatrix(); // TODO: remove before submission
 
         // Print the initialization results
         System.out.println("Initialization Results");
@@ -245,7 +242,7 @@ public class LCP {
                 FILE_PATH = new File(filePath);
             } else {
                 // If this is the first run, use the initial FILE_PATH
-                FILE_PATH = new File("CS3700\\HW10\\topo.txt"); // TODO: turnin path - "topo.txt" 
+                FILE_PATH = new File("topo.txt");
                 firstRun = false;
             }
             try {
