@@ -32,19 +32,16 @@ import java.io.*;
 import java.util.*;
 
 public class LCP {
-    private static final int MIN_NODES = 2;
-    private static final File FILE_NAME = new File("HW10/topo.txt"); // TODO: turnin path - "topo.txt" mac/linux path-
-                                                                     // HW10/topo.txt windows path- HW10\\topo.txt
-    private static Scanner sc = new Scanner(System.in);
+    
     private static int cost[][];
     ArrayList<Integer> n_prime;
     ArrayList<String[]> y_prime;
     private static int[] D;
     private static String[] p;
 
-    // constructor to initialize cost matrix with infinity and 0s on the diagonal
-    public LCP(int[][] cost, int n) throws IOException {
-        LCP.cost = cost;
+    // constructor to initialize cost matrix from main, n_prime, y_prime, D and p
+    public LCP(int[][] initMatrix, int n) {
+        cost = initMatrix;
         D = new int[n];
         p = new String[n];
         // Initialize N' to have only V0
@@ -68,7 +65,11 @@ public class LCP {
                 p[i] = "V0";
 
             }
+
         }
+
+        printCostMatrix(); // TODO: remove before submission
+
         // Print the initialization results
         System.out.println("Initialization Results");
         printLCPResults();
@@ -194,88 +195,115 @@ public class LCP {
         }
     }
 
+    // Main method validates nodes and topology file for the cost matrix then creates an LCP object to run the algorithm logic and print the forwarding table. 
     public static void main(String[] args) throws IOException {
+        final int MIN_NODES = 2;
+        boolean validNodeSize, errorDetected, firstRun; 
+        int initMatrix[][];
+        File FILE_PATH;
+        LCP lcp; 
+        
+        Scanner sc = new Scanner(System.in);
 
-        // Get user input for number of nodes - validate that user input is at least
-        // MIN_NODES
-
+        // Keep asking the user for node size until it is a valid node size (minimum 2)
         System.out.println("How many routers are in your network? (2 minimum): ");
         int nodeSize = sc.nextInt();
-        
-        // reads topo.txt and updates the cost matrix to have the cost values associated
-        // with the links in the file
-        FileReader fr = new FileReader(FILE_NAME);
-        BufferedReader br = new BufferedReader(fr);
-        String line = null;
-        String[] tmp;
-        int x, y, c;
-        int errorLine = 1;
-        Boolean validated = true;
-        if (nodeSize < MIN_NODES) {
-            System.out.println("There must be at least 2 routers!");
-            System.exit(-1);
-        } else {
-            cost = new int[nodeSize][nodeSize];
-            for (int i = 0; i < cost.length; i++) {
-                for (int j = 0; j < cost.length; j++) {
-                    if (i == j) {
-                        cost[i][j] = 0;
-                    } else {
-                        cost[i][j] = Integer.MAX_VALUE;
-                    }
-                }
-            }
-            line = br.readLine();
-            while (!validated) { // Read each line from the BufferedReader until there are no more
-                                                     // lines
-                                                     // to read
-                tmp = line.split("\t"); // Split the line into an array of strings using the tab character as the
-                                        // delimiter
-                x = Integer.parseInt(tmp[0].trim()); // Parse the first element of the array as an integer and assign it
-                                                     // to
-                                                     // variable x after trimming any leading or trailing whitespace
-                y = Integer.parseInt(tmp[1].trim()); // Parse the second element of the array as an integer and assign
-                                                     // it to
-                                                     // variable y after trimming any leading or trailing whitespace
-                c = Integer.parseInt(tmp[2].trim()); // Parse the third element of the array as an integer and assign it
-                                                     // to
-                                                     // variable c after trimming any leading or trailing whitespace
+        validNodeSize = false;
+        while (!validNodeSize) {
 
-                // TODO: NOT WORKING PROPERLY Check if the cost is negative - alert user what
-                // error the line was on and start process over.
-                if (c < 0) {
-                    System.out.println("Error: Negative cost value found on line " + errorLine
-                            + ". Please fix the input file and try again.");
-                   
-
-                } else if (x < 0 || x > cost.length - 1 || y < 0 || y > cost[0].length - 1) { // Check if x and y are
-                                                                                              // within
-                                                                                              // the bounds
-                                                                                              // of the "cost" array
-
-                    System.out.println("Error: Invalid router found on line " + errorLine); // Print an error message to
-                                                                                            // the
-                                                                                            // console
-                    
-
-                } else { // If x or y are out of bounds
-                    cost[x][y] = c; // Assign the value of c to the element in the "cost" array at the position
-                                    // (x,y)
-                    cost[y][x] = c; // Assign the value of c to the element in the "cost" array at the position
-                                    // (y,x)
-                    
-
-                    LCP lcp = new LCP(cost, nodeSize);
-                    lcp.run(nodeSize);
-                    lcp.printForwardingTable();
-                    validated = true;
-                }
-                errorLine++; // Increment the value of the variable "errorLine" by 1
-                line = br.readLine();
+            if (nodeSize < MIN_NODES) {
+                System.out.println("There must be at least 2 routers! Check the network and try again.");
+                System.out.println("How many routers are in your network? (2 minimum): ");
+                nodeSize = sc.nextInt();
+            } else {
+                validNodeSize = true;
             }
         }
 
-       
-    }
+        // With a validated node size, create an initial cost matrix and initialize with 0's on diagonal, infinity off-diagonal 
+        initMatrix = new int[nodeSize][nodeSize];
+        for (int i = 0; i < initMatrix.length; i++) {
+            for (int j = 0; j < initMatrix.length; j++) {
+                if (i == j) {
+                    initMatrix[i][j] = 0;
+                } else {
+                    initMatrix[i][j] = Integer.MAX_VALUE;
+                }
+            }
+        }
 
+        
+
+        // Loop until there are no errors when reading through the whole file
+        errorDetected = true;
+        firstRun = true;
+        while (errorDetected) {
+            // On the first run of the file parsing, use initial file name, otherwise if an error is detected, ask user for new file path. 
+            if (!firstRun) {
+                System.out.println("Enter the file path (e.g. topo.txt): ");
+                String filePath = sc.next();
+                FILE_PATH = new File(filePath);
+            } else {
+                // If this is the first run, use the initial FILE_PATH
+                FILE_PATH = new File("CS3700\\HW10\\topo.txt"); // TODO: turnin path - "topo.txt" 
+                firstRun = false;
+            }
+            try {
+                FileReader fr = new FileReader(FILE_PATH);
+                BufferedReader br = new BufferedReader(fr);
+                String line = null;
+                String[] tmp;
+                int x, y, c;
+                int errorLine = 1;
+                errorDetected = false;
+
+                // Loop through the FILE_PATH and parse each line 
+                while ((line = br.readLine()) != null) {
+                    tmp = line.split("\t");
+                    x = Integer.parseInt(tmp[0].trim());
+                    y = Integer.parseInt(tmp[1].trim());
+                    c = Integer.parseInt(tmp[2].trim());
+
+                    // If the cost is negative - alert user what error the line was on and start file parse over.
+                    if (c < 0) {
+                        System.out.println("Error: Negative cost value found on line " + errorLine
+                                + ". Please fix the input file and try again.");
+                        errorDetected = true;
+                        break;
+                    } 
+                    // If either node is invalid - alert user what error the line was on and start file parse over.
+                    else if (x < 0 || x > initMatrix.length - 1 || y < 0 || y > initMatrix[0].length - 1) {
+                        System.out.println("Error: Invalid router found on line " + errorLine
+                                + ". Please fix the input file and try again.");
+                        errorDetected = true;
+                        break;
+                    } 
+                    // Otherwise all data is valid and set the cost of each direct link in initial cost matrix
+                    else {
+                        initMatrix[x][y] = c;
+                        initMatrix[y][x] = c;
+                        // increment the error counter line
+                        errorLine++;
+                    }
+                }
+                // Close the BufferedReader
+                br.close();
+                
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found. Please try again.");
+                errorDetected = true;
+            } catch (IOException e) {
+                e.printStackTrace();
+                errorDetected = true;
+            }
+        }
+        
+        // Close the scanner 
+        sc.close();
+
+        // After all errors have been cleared by topology file. 
+        lcp = new LCP(initMatrix, nodeSize);
+        lcp.run(nodeSize);
+        lcp.printForwardingTable();
+    }
 }

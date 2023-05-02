@@ -1,0 +1,15 @@
+Pass by name/value: 
+
+int z = addInt(5,6)
+or 
+int a = 5, b=6; 
+int z = add(a,b)
+
+Pass by reference: 
+Integer a, b; 
+a = new Integer(); 
+b = new Integer(); 
+
+int z = addI(a,b)
+
+The difference is if the variables passed in are objects rather than primitive data types. 
